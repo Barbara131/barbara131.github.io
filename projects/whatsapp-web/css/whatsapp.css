@@ -1,0 +1,137 @@
+/*
+
+
+.header{
+    background-color: #00bfa5;
+    width: 100%;
+    
+}
+
+.first_secs{
+    padding: 50px;
+    margin:10px 390px;
+    border-style: ;
+    width:500px;
+    height:755px;
+    background-color: white;
+    border-radius: 4px;
+}
+.f_contain{
+    margin-left: auto;
+     margin-right: auto;
+ }
+
+.flex-container{
+    position: relative;
+    display: flex;
+    flex: none;
+    width: 255px;
+    height: 255px;
+    justify-content: center;
+    align-items: center;
+}
+
+ img{
+     position: relative;
+ } */
+
+body{
+    background-color: gainsboro;
+    margin: auto;   
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+.main-container {
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    box-shadow:0 0 40px rgba(0, 0, 0,0.2);
+    justify-content: center;
+    width: 80%;
+    position: relative;
+    top:-80px;
+    
+}
+
+.flex-container {
+    background-color: white;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 40px;
+    /* height: 800px; */
+}
+
+.flexing{
+    background-color: ghostwhite;
+    text-align: center;
+    padding: 5%;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.flexing video{
+    width: 560px;
+}
+
+@media only screen and (max-width:950px){
+    .flexing{
+        padding: 0;
+    }
+    
+    .flexing video{
+        width: 100%;
+    }
+
+    .flex-container {
+        flex-direction: column;        
+    }
+}
+ 
+.header{
+    background-color:#00bfa5;
+    height: 200px;
+    padding: 1px;
+}
+
+.header_title{
+    display: flex;
+    align-items: center;
+    color: white;
+    min-height: 32px;
+    margin-left: 11%;
+    margin-right: 11%;
+    margin-top: 1.5%;
+    margin-bottom: 3%;
+    /* justify-content: center; */
+}
+a{ 
+    color:#009688;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 28px 0px 50px;
+}
+
+.left-container h1 {
+    font-weight: 300;
+    margin-bottom: 52px;
+    margin-top: 0px;
+}
+
+.right-container{
+    text-align: center;
+}
+
+ol li b{
+    font-weight: 500;
+}
+
+ol li:nth-child(1n+1){
+    margin-top: 18px;
+}
+ol li:nth-child(1){
+    margin-top: 0px;
+}
+
