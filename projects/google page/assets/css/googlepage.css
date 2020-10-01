@@ -1,0 +1,185 @@
+body{
+    background-color: white;
+    margin: 0px;
+}
+
+.navbar{
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-top: 10px;
+}
+.navbar a{
+    display: block;
+    color: black;
+    text-decoration: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar a:hover{
+    text-decoration: underline;
+}
+
+.navbar li{
+    margin-right: 25px;
+}
+
+.c-0{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /* padding-top: 5px; */
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+}
+
+.c-0:hover{
+    background-color: whitesmoke;
+}
+
+.c-E{
+    display: flex;
+    width: 30px;
+    height: 30px;
+    border-radius: 100px;
+    background-color: slategrey;
+    color: white;
+}
+.c-E span{
+   margin-top: 2px;
+   margin-left: 10px;
+   line-height: 25px;
+}
+.box-shadow:hover{
+    box-shadow: 0 0 0 5px whitesmoke;
+}
+
+.flaticon-show-apps-button{
+    font-size: 15px;
+}
+
+header{
+    text-align: center;
+}
+header img{
+    width: 22%;
+    margin-top: 48px;
+}
+
+.img_form{
+    position: absolute;
+    z-index: 23;
+    top: 295px;
+    width: 18px;
+    height: 18px;
+    left: 409px;
+}
+
+form{
+    position: relative;
+    text-align: center;
+}
+
+form a{
+    text-decoration: none;
+}
+
+input[type="text"]{
+    border: none;
+    border-radius: 23px;
+    box-shadow: 0 1px 7px #20212447 ;
+    font-size: 16px;
+    height: 42px;
+    outline: none;
+    padding-left: 50px;
+    padding-top: 2px;
+    width: 38%;   
+}
+
+[class="flaticon-microphone"]{
+    font-size: 22px;
+    position: absolute;
+    bottom: 9px;
+    right: 413px;
+}
+/* .li-cl{
+    text-decoration: none;
+} */
+.main-lists{
+    list-style-type: none;
+    margin-top: 30px;
+    padding-left: 0px;
+}
+
+.main-lists a{
+    text-decoration: none;
+}
+
+.main-lists li{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 115px;
+    width: 115px;
+}
+
+.main-lists li:hover{
+    background-color: ghostwhite;
+    border-radius: 5px;
+}
+
+.main-lists li span{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, "Roboto";
+    font-size: smaller;
+    margin-top: 8px;
+}
+
+.f-ml, .s-ml{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: end;
+    padding-left: 0px;
+}
+
+.s-ml{
+    margin-top: 25px;
+}
+
+.circle{
+    display: flex;
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    background-color: whitesmoke;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: auto;
+    margin-top: 15px;
+}
+
+
+.circle img{
+    width: 30px;
+    height: 30px;
+    /* text-align: center; */
+}
+.s-ml .circle img:nth-child(2){
+    width: 25px;
+    height: 25px;
+}
+
+[class="flaticon-github-logo"]{
+    font-size: 24px;
+}
+
+[class="flaticon-add"]{
+    font-size: 15px;
+}
