@@ -21,13 +21,16 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark pt-0 pb-0 myBorder" id="mynav">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#"></a>
+        <a class="navbar-brand m-0" href="#"></a>
         <button class="navbar-toggler mt-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03"
           aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" id="myDiv">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">FULL HOMEPAGE</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="#">HOMEPAGE</a>
             </li>
@@ -44,39 +47,37 @@
               <a class="nav-link" href="#">UPLOAD</a>
             </li>
           </ul>
-          <ul class="navbar-nav">
+          <ul class="navbar-nav" id="myDiv1">
             <li class="nav-item">
               <a class="nav-link" href="#">REGISTER</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">LOGIN</a></li>
+              <a class="nav-link active" href="#">LOGIN</a></li>
           </ul>
         </div>
       </div>
     </nav>
 
-    <!-- <nav class="navbar navbar-expand-lg "> -->
  
-
     <!-- image -->
-    <img src="image/logo.svg" class="img-fluid mx-auto d-block" alt="133x" style="width: 300px; height: 300px;">
+    <img src="image/logo.svg" class="my-5 mx-auto d-block" alt="133x" style="width: 300px;">
 
     <!-- search bar -->
     <div class="container">
-      <form class="d-flex justify-content-center" style="height: 55px;">
+      <form class="d-flex justify-content-center" style="height: 48px;">
         <input class="form-control rounded-end-unset" id="myForm" type="search" placeholder="Search" aria-label="Search"
           style="width: 50%;">
         <button class="btn btn-outline-success" id="myBtn" type="submit">Search</button>
       </form>
     </div>
 
-
-    <div class="container mt-5">
-      <div class="row" id="myRow1">
+    <!-- news bar -->
+    <div class="container mt-5 position-relative" id="myContainer">
+      <div class="row position-relative" id="myRow1">
         <div class="col p-0">
-          <p class="mb-0 text-white">1337x DOMAIN</p>
+          <p class="mb-0 text-white">1337x.to</p>
         </div>
-        <div class="col">
+        <div class="col p-0 fs-6">
           <p class="text-end mb-0 text-white">1 month ago</p>
         </div>
       </div>
@@ -92,76 +93,74 @@
 
 
     <div class="container mt-5 mb-5">
-      <div class="row">
-        <div class="col text-center">
+      <div class="row text-center" id="myR">
+        <div class="col">
           <a href="#">
             <img src="image/Group 40.svg" alt="" style="width: 72px; height: 72px;">
-          </a>
-          <a href="#">
             <p class="mb-0" style="color: #ee490e;">MOVIES</p>
             <p class="mt-0 text-success">Library</p>
           </a>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 32.svg" alt="" style="width: 72px; height: 72px;">
-          </a>
           <p class="mb-0" style="color: #ee490e;">TELEVISION</p>
           <p class="mt-0 text-success">Library</p>
+          </a>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 33.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-0" style="color: #ee490e;">GAMES</p>
           </a>
-          <p class="mb-0" style="color: #ee490e;">GAMES</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 39.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-3" style="color: #ee490e;">MUSIC</p>
           </a>
-          <p class="mb-3" style="color: #ee490e;">MUSIC</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 38.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-3" style="color: #ee490e;">APPLICATIONS</p>
           </a>
-          <p class="mb-3" style="color: #ee490e;">APPLICATIONS</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 37.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-3" style="color: #ee490e;">ANIME</p>
           </a>
-          <p class="mb-3" style="color: #ee490e;">ANIME</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 36.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-0" style="color: #ee490e;">DOCUMENTARIES</p>
           </a>
-          <p class="mb-0" style="color: #ee490e;">DOCUMENTARIES</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 35.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-0" style="color: #ee490e;">OTHER</p>
           </a>
-          <p class="mb-0" style="color: #ee490e;">OTHER</p>
         </div>
-        <div class="col text-center">
+        <div class="col">
           <a href="#">
             <img src="image/Group 34.svg" alt="" style="width: 72px; height: 72px;">
+            <p class="mb-0" style="color: #ee490e;">XXX</p>
+          </div>
           </a>
-          <p class="mb-0" style="color: #ee490e;">XXX</p>
-        </div>
       </div>
     </div>
 
     <footer id="myNav">
       <nav class="nav justify-content-center">
         <a class="nav-link" href="#">HOME</a>
-        <a class="nav-link" href="#">FULL HOMEPAGE</a>
+        <a class="nav-link text-white" href="#">FULL HOMEPAGE</a>
         <a class="nav-link" href="#">DCMA</a>
         <a class="nav-link" href="#">CONTACTS</a>
       </nav>
-      <p class="text-center text-white m-3">1337x 2007 - 2020</p>
+      <p class="text-center text-white mt-3 mb-0">1337x 2007 - 2020</p>
     </footer>
 
 
@@ -172,7 +171,8 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous">
+  </script>
 </body>
 
 </html>

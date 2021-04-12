@@ -1,5 +1,9 @@
+html{
+    background: #000 url('../image/body-bg.jpg') repeat 0 0;
+}
+
 body{
-    background: black url("../image/main-bg.png") no-repeat center top!important;
+    background: url("../image/main-bg.png") no-repeat center top!important;
     background-color: black;
     color: white;
 }
@@ -27,6 +31,32 @@ body{
     }
 }
 
+#myDiv a{
+    color: white;
+}
+
+#myDiv a:hover{
+    color: #d63600;
+}
+
+#myDiv .active{
+    color: #65ad19;
+}
+#myDiv .active:hover{
+    color: #d63600;
+}
+
+
+#myDiv1 a:hover{
+    color: #d63600;
+}
+
+#myDiv1 a{
+    color: white;
+}
+#myDiv1 .active{
+    color: #d63600;
+}
  /* XX-Large devices (larger desktops)/ No media query since the xxl breakpoint has no upper bound on its width */
 /* 
 .d-flex{
@@ -45,7 +75,7 @@ body{
     border-bottom-right-radius: 0px;
     border-bottom-left-radius: 5px;
     border-top-left-radius: 5px;
-
+    color: #adadad;
 }
 
 #myBtn{
@@ -58,33 +88,54 @@ body{
     right: 1px;
 }
 
+#myContainer{
+    width: 79%;
+}
+
 #myRow1{
     border: 1px solid #ff6735;
     background-color: rgba(214,54,0,.7);
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    padding: 8px 20px;
+    padding: 8px 13px;
 }
 
 #myRow2{
     background-color: rgba(63,63,63,.7);
     border-color: rgba(255,255,255,.2);
-    padding: 19px 20px 10px;
+    padding: 15px 12px 10px;
+}
+
+#myR a{
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0);
+}
+
+#myR a p:nth-child(2):hover{
+    text-decoration: underline;
+    color: tomato;
 }
 
 #myNav{
     background-color: #090909;
     border-top: 2px solid #55200e;
-    padding-bottom: 20px;
+}
+
+#myNav a{
+    color: #818181;
+}
+
+#myNav a:hover{
+    color: white;
 }
 
 .navbar-dark .navbar-toggler{
     /* color: black; */
-    background-color: black;
+    background-color: white;
 }
 
 .navbar-dark .navbar-toggler-icon{
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e style='fill:#AB7C94;'") ;
+    background-image: url("../image/Vector.svg")!important ;
 }
 
 /* // X-Small devices (portrait phones, less than 576px)
