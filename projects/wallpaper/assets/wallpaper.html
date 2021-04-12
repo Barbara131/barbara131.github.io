@@ -4,121 +4,319 @@
     <meta charset='utf-8'>
     <title>Page Title</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' href="css/wallpaper.css">  
+    <style>
+        body{
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin: 0;
+    background: url("https://newevolutiondesigns.com/images/freebies/hd-wallpaper-1.jpg") no-repeat center fixed aquamarine;
+    /* background-size: cover; */
+}
+
+.grid-container{
+    display: grid;
+    /* grid-template-columns: auto auto auto auto auto;
+    grid-template-rows: auto; */
+    /* background-color: cadetblue; */
+    position: relative;
+    gap: 30px;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 20px;
+    /* max-width: 1024px; */
+    height: fit-content;
+}
+/* @media(max-width: 425px){
+    .grid-container{
+        max-width: 100%;
+
+    }
+} */
+
+@media(max-width: 320px){
+    .grid-container{
+        max-width: 100%;
+        /* padding: 5px; */
+        /* justify-content: center; */
+    }
+}
+
+
+.grid-container > div{
+    font-size: 25px;
+    line-height: 10px;
+    text-align: center;
+}
+
+/* tablet view*/
+@media(max-width:768px){
+    .grid-container > div{
+        font-size: 25px;
+        /* margin: 0 auto; */
+        /* padding: 3px; */
+    }
+}
+/* mobile view */
+@media(max-width:425px){
+    .grid-container > div{
+        font-size: 23px;
+        /* margin: 0 auto; */
+        /* padding: 3px; */
+    }
+}
+
+.items-13{
+    position: relative;
+    grid-column-end: span 5;
+}
+
+p{
+    font-size: small;
+    margin-bottom: 0px;
+}
+
+.circle{
+    display: inline-grid;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+}
+@media(max-width: 425px){
+    .circle{
+        width: 45px;
+        height: 45px;
+    }
+}
+
+#search{
+    /* position: relative; */
+    background-color: white;
+    border: none;
+    color: black;
+    width: 100%;
+    height: 40px;
+    border-radius: 30px;
+    padding: 7px 10px 7px 35px;
+    outline: none;
+    font-size: 16px;
+}
+
+.seh_btn{
+    position: absolute;
+    z-index: 6;
+    bottom: 12px;
+    left: 9px;
+    width: 16px;
+    height: 16px;
+}
+
+
+/* .items-1{
+    padding-left: 3px;
+} */
+/* .items-2{
+    grid-area: myA2;
+}
+.items-3{
+    grid-area: myA3;
+}
+.items-4{
+    grid-area: myA4;
+}
+.items-5{
+    grid-area: myA5;
+} */
+/* .items-6{
+    padding-left: 3px;
+}  */
+.items-7{
+    grid-column-end: 4;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+.items-8{
+    grid-column-end: 6;
+}
+/* .items-9{
+   padding-left: 3px;
+} */
+.items-10{
+    grid-column-end: 4;
+} 
+.items-11{
+    grid-column-end: 6;
+}
+.items-12{
+    grid-column-end: 4;
+}
+/* .items-13{
+    padding-left: 5px;
+} */
+.items-14 > p{
+    margin-bottom: 3px;
+}
+.items-15 > p{
+    margin-bottom: 3px;
+}
+.items-16 > p{
+    margin-bottom: 3px;
+}
+.items-17 > p{
+    margin-bottom: 3px;
+}
+.items-18 > p{
+    margin-bottom: 3px;
+}
+
+@media (max-width: 425px)
+{
+    .items-1{
+    padding-left: 3px;
+    }
+    .items-6{
+    padding-left: 3px;
+    } 
+    .items-9{
+   padding-left: 3px;
+    }
+}
+    </style>
 </head>
 
 <body>   
-    <div class="flex-container">
-        <div class="wrapper">
-            <div class="box-1">
-                <div class="c">
-                    <div class="circle">M</div>
-                    <span>Math</span>
-                </div>
-            </div>
-            <div class="box-2">
-                <div class="c">
-                    <div class="circle">D</div>
-                    <span>Dodge</span>
-                </div>
-            </div>
-            <div class="box-3">
-                <div class="c">
-                    <div class="circle">A</div>
-                    <span>Adobe-XD</span>
-                </div>
-            </div>
-            <div class="box-4">
-                <div class="c">
-                    <div class="circle">T</div>
-                    <span>Tether</span>
-                </div>
-            </div>
-            <div class="box-5">
-                <div class="c">
-                    <div class="circle">H</div>
-                    <span>HiOS</span>
-                </div>
-            </div>
-            <div class="box-6">
-                <div class="c">
-                    <div class="circle">B</div>
-                    <span>Behance</span>
-                </div>
-            </div>
-            <div class="box-7">
-                <div class="c">
-                    <div class="circle">D</div>
-                    <span>Docs</span>
-                </div>
-            </div>
-            <div class="box-8">
-                <div class="c">
-                    <div class="circle">W</div>
-                    <span>Wish</span>
-                </div>
-            </div>
-            <div class="box-9">
-                <div class="c">
-                    <div class="circle">I</div>
-                    <span>Instagram</span>
-                </div>
-            </div>
-            <div class="box-10">
-                <div class="c">
-                    <div class="circle">FM</div>
-                    <span>FM-Radio</span>
-                </div>
-            </div>
-            <div class="box-11">
-                <div class="c">
-                    <div class="circle">G</div>
-                    <span>Games</span>
-                </div>
-            </div>
-            <div class="box-12">
-                <div class="c">
-                    <div class="circle">B</div>
-                    <span>Bible</span>
-                </div>
-            </div>
-            <div class="box-13">
-                <div class="c">
-                    <div class="circle"></div>
-                    <form action=""></form>
-                </div>
-            </div>
-            <div class="box-14">
-                <div class="c">
-                    <div class="circle">C</div>
-                    <span>Call</span>
-                </div>
-            </div>
-            <div class="box-15">
-                <div class="c">
-                    <div class="circle">M</div>
-                    <span>Messages</span>
-                </div>
-            </div>
-            <div class="box-16">
-                <div class="c">
-                    <div class="circle"></div>
-                    <span></span>
-                </div>
-            </div>
-            <div class="box-17">
-                <div class="c">
-                    <div class="circle">G</div>
-                    <span>Google</span>
-                </div>
-            </div>
-            <div class="box-18">
-                <div class="c">
-                    <div class="circle">C</div>
-                    <span>Contacts</span>
-                </div>
-            </div>
+
+    <div class="grid-container">
     
+    
+        <div class="items-1">
+            <div class="circle" style="background-color: lightskyblue;">
+                X
+            </div>
+            <p>Math</p>
+        </div>
+        <div class="items-2">
+            <div class="circle" style="background-color: rgb(98, 207, 184);">
+                D
+            </div>
+            <p>Dodge</p>
+        </div>
+        <div class="items-3">
+            <div class="circle" style="background-color: rgb(151, 8, 151);">
+                Xd
+            </div>
+            <p>Adobe XD</p>
+        </div>
+        <div class="items-4">
+            <div class="circle" style="background-color: lightblue;">
+                T
+            </div>
+            <p>Tether</p>
+        </div>
+        <div class="items-5">
+            <div class="circle" style="background-color: rgb(214, 214, 235);">
+                HI
+            </div>
+            <p>HiOS</p>
+        </div>
+        <div class="items-6">
+            <div class="circle" style="background-color: rgba(79, 79, 230, 0.993);">
+                BE
+            </div>
+            <p>Behance</p>
+        </div>
+        <div class="items-7">
+            <div class="circle" style="background-color: rgb(127, 127, 247);">
+                D
+            </div>
+            <p>Docs</p>
+        </div>
+        <div class="items-8">
+            <div class="circle" style="background-color: rgb(52, 179, 253);">
+                W
+            </div>
+            <p>Wish</p>
+        </div>
+        <div class="items-9">
+            <div class="circle"
+                style="background-image: linear-gradient(to bottom right, #405DE6 , #5B51D8, #833AB4, #C13584,#E1306C, #FD1D1D, #F56040, #F77737, #FCAF45);">
+                <!-- royal-blue-#405DE6,blue-#5B51D8,purple-#833AB4,darkpink-#C13584,purplered-#E1306C,red-#FD1D1D,darkorange-#F56040,orange-#F77737,yellow-#FCAF45,lightyellow-#FFDC80-->
+                I
+            </div>
+            <p>Instagram</p>
+        </div>
+        <div class="items-10">
+            <div class="circle" style="background-color: rgb(245, 228, 228);">
+                FM
+            </div>
+            <p>FM Radio</p>
+        </div>
+        <div class="items-11">
+            <div class="circle" style="background-color: #5B51D8;">
+                G
+            </div>
+            <p>Games</p>
+        </div>
+        <div class="items-12">
+            <div class="circle" style="background-color: brown;">
+                B
+            </div>
+            <p>Bible</p>
+        </div>
+        <div class="items-13"><a href="#"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAF42lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJl
+        Z2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1Q
+        IENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5
+        OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8i
+        IHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAv
+        IiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9S
+        ZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDIwLTA5LTIxVDE1OjUy
+        OjUyKzAxOjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyMC0wOS0yOVQwODo0NzoyNSswMTowMCIgeG1wOk1ldGFkYXRhRGF0ZT0iMjAyMC0wOS0yOVQwODo0NzoyNSswMTow
+        MCIgZGM6Zm9ybWF0PSJpbWFnZS9wbmciIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIgeG1wTU06
+        SW5zdGFuY2VJRD0ieG1wLmlpZDo5NzIyM2M4NS04YjkyLTRhNDYtODdmYS04OTcyY2U2MTg1MWUiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6YWJkMWRkMDUtYmNj
+        ZS1kMDRkLWFiMjQtZWVlMmE3OWNmOTc5IiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6YWJkMWRkMDUtYmNjZS1kMDRkLWFiMjQtZWVlMmE3OWNmOTc5
+        Ij4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDphYmQxZGQwNS1i
+        Y2NlLWQwNGQtYWIyNC1lZWUyYTc5Y2Y5NzkiIHN0RXZ0OndoZW49IjIwMjAtMDktMjFUMTU6NTI6NTIrMDE6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBo
+        b3Rvc2hvcCAyMS4wIChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6OTcyMjNjODUtOGI5Mi00
+        YTQ2LTg3ZmEtODk3MmNlNjE4NTFlIiBzdEV2dDp3aGVuPSIyMDIwLTA5LTI5VDA4OjQ3OjI1KzAxOjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3No
+        b3AgMjEuMCAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+
+        IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+4NalxAAAAi5JREFUSInVlj9oFFEQxn97szG+vQsmCiE2KtFGhYjYWqmNVjYKgoJ/CkEsrUXURgQDgoWFRFJa
+        iYWVGLAwkAsoWgXSWQhR7s5Cc2HjPos37/J23bvcISn8YHjLzLz53syb2d3IWstWorKl0YHYPyRxXGbfAZwBDgI7gRWgDrwF1orOIkKtVmPf5CTz9XqeoIAR4DZwE9he
+        Yv8G3AOeAJlXZllGu92m2Wh0HMtKtAd4D9wC5oCzwASwDdgLXAG+Ao+Bl0DiN1prSdOUH63WRjRrLdZajAhGZMSIfDYiq0bkgurKpGJE7hsRa0ReGJHI25I4Zqxa7cQt
+        EjzUTb2ChzKt/udDfXVoqBM38m2axPGopj6Hu9h+YIAloAkc8cooiviZpn/dwWnchT7tMzjAKjALTAH7w7J7hASHdJ0fgCD0P1xmDAlGdW0NSNDUdWwzghVdJwYk8P7f
+        NyNY1PXEgAQnARvszyHsomHgC66TjhJMaA+MA8vAAnAqNPxaXwfyGazhxn8KuNtHcAGeA1XgTlevwqBVjMgrHZ5HRsR0GbBxI/Ja/RZ1X86nbNA8Z6InO4cr2SyuFRvA
+        blzNL+nJPwDH1P8aQVl9iYoZeIl0/D/pKUPJjMgbI3JcTz6j+pkwk14ZFHEA9z3YhWvFBTZaGtw9PgMuh5n4DLpGDbCs0g0ZcBXXJNdxr5uLwO9+CfqBBW4Aw7hMPgIP
+        cgQiQpZl/MNPQIYrzxLwziuj//6v4g93I8X0LY4BjQAAAABJRU5ErkJggg==" alt="search_pic" class="seh_btn"></a><input
+                type="search" name="search" id="search" placeholder="Search"></div>
+        <div class="items-14">
+            <div class="circle" style="background-color: lightgreen;">
+                P
+            </div>
+            <p>Phone</p>
+        </div>
+        <div class="items-15">
+            <div class="circle" style="background-color: rgba(68, 68, 228, 0.993);">
+                M
+            </div>
+            <p>Messages</p>
+        </div>
+        <div class="items-16">
+            <div class="circle" style="background-color: rgb(202, 202, 245);">
+                A
+            </div>
+            <p>Apps</p>
+        </div>
+        <div class="items-17">
+            <div class="circle" style="background-image: linear-gradient(to bottom right, red,yellow,green,blue) ;">
+                CH
+            </div>
+            <p>Chrome</p>
+        </div>
+        <div class="items-18">
+            <div class="circle" style="background-color: #405DE6;">
+                C
+            </div>
+            <p>Contacts</p>
         </div>
     </div>
 </body>
