@@ -36,16 +36,21 @@ function confirmLogin(){
          heading.innerHTML = "You are logged in";
          document.body.innerHTML = "";
          document.body.appendChild(heading);
-
+    }
+    else{
+        var heading = document.createElement("h1");
+        heading.innerHTML = "Check password or username!!";
+        document.body.innerHTML = "";
+        document.body.appendChild(heading);
     }
     // console.log(username, Password);
 }
 
 
 window.onload = function(){
-    // document.getElementById("Uname").innerHTML = "Hello";
-    // document.getElementsByTagName("button")[0].innerHTML = "Sign-in";
+    document.getElementById("Uname").innerHTML = "Hello";
+    document.getElementsByTagName("button")[0].innerHTML = "Sign-in";
     document.getElementsByTagName("button")[0].addEventListener("click", confirmLogin, false);
-    // document.getElementById("Uname").value = "Hello";
+    document.getElementById("Uname").value = "Hello";
 
 };

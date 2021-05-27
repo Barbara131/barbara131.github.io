@@ -65,6 +65,13 @@ var getLongestWord = function(){
 
 console.log(getLongestWord());
 
+//repeat a string
+var repeatString = function(str, num){
+    return (num > 0 ? str.repeat(num) : "")
+}
+console.log(repeatString("Asimana Onyeka", 5));
+console.log(repeatString("Barbara Onyeka", 2));
+
 // 1..Returning numbers from 1-255 in an array
  function getNum(){
      var num = new Array();
@@ -78,4 +85,4 @@ console.log(getLongestWord());
  getNum();
 
 
-// 2..
+// 2.. Returning the largest numbers from an array 

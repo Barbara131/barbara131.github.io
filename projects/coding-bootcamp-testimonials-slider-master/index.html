@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- displays site properly based on user's device -->
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+
+    <title>Frontend Mentor | Coding Bootcamp Testimonials Slider</title>
+
+    <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
+    <style>
+      /* .attribution {
+        font-size: 11px;
+        text-align: center;
+      }
+      .attribution a {
+        color: hsl(228, 45%, 44%);
+      } */
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter Medium";
+        font-weight: 500;
+        margin: 0;
+      }
+
+      a {
+        cursor: default;
+      }
+      a:hover {
+        /* background-color: coral; */
+        text-decoration: none;
+      }
+
+      .p0 {
+        color: hsl(240, 38%, 20%);
+        position: relative;
+        bottom: -106px;
+        left: 115px;
+        width: 597px;
+        padding: 20px;
+        z-index: 6;
+        font-size: xx-large;
+        font-family: "Inter-light";
+      }
+
+      @media screen and (max-width: 425px) {
+        .p0 {
+          bottom: -77px;
+          margin: 0;
+          left: 0;
+          width: 79%;
+          text-align: center;
+          font-size: larger;
+          padding: 5px;
+        }
+      }
+
+      i {
+        color: hsl(240, 18%, 77%);
+        font-style: normal;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      @media screen and (max-width: 425px) {
+        .row {
+          flex-direction: column-reverse;
+        }
+      }
+
+      .img1 {
+        height: 5rem;
+        position: relative;
+        bottom: -1px;
+        left: 301px;
+        overflow: hidden;
+      }
+
+      .img-style {
+        height: 29rem;
+        position: relative;
+        bottom: -93px;
+        padding-bottom: 10px;
+        overflow: hidden;
+      }
+
+      .links {
+        background-color: white;
+        border-radius: 80px;
+        width: 95px;
+        height: 44px;
+        position: absolute;
+        bottom: -77px;
+        right: 414px;
+        z-index: 5;
+      }
+
+      @media screen and (max-width: 425px) {
+        .img1 {
+          bottom: 85px;
+          left: 0px;
+          height: 3rem;
+        }
+
+        .img-style {
+          top: 37px;
+          bottom: 0;
+          width: 21rem;
+          height: 20rem;
+        }
+
+        .links {
+          top: 297px;
+          left: 148px;
+        }
+      }
+
+      .link2 {
+        padding: 13px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .img2 {
+        border-radius: 5px;
+        height: 24rem;
+        width: 24rem;
+        position: absolute;
+        top: 141px;
+        right: 134px;
+        z-index: 3;
+        box-shadow: -7px 13px 35px -20px black;
+      }
+
+      .rows {
+        display: flex;
+        flex-direction: row;
+        padding-top: 100px;
+      }
+
+      .p1 {
+        /* display: none; */
+        position: absolute;
+        bottom: -57px;
+        left: 323px;
+        font-size: 20px;
+        font-weight: 700;
+        color: hsl(240, 38%, 20%);
+      }
+
+      @media screen and (max-width: 425px) {
+        .img2 {
+          height: 16rem;
+          width: 17rem;
+          top: 69px;
+          left: 55px;
+        }
+
+        .rows {
+          /* display: flex;
+          flex-direction: row;  */
+          padding-top: 0;
+          margin-top: 97px;
+        }
+
+        .rows img {
+          width: 85%;
+        }
+
+        .p1 {
+          margin-top: 0;
+          left: 65px;
+          bottom: -82px;
+          margin-bottom: 0;
+        }
+      }
+
+      .p2 {
+        display: none;
+        position: absolute;
+        bottom: -57px;
+        left: 323px;
+        font-size: 20px;
+        font-weight: 700;
+        color: hsl(240, 38%, 20%);
+      }
+      /* .imG {
+        display: none;
+      } */
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="row">
+        <img src="images/pattern-quotes.svg" alt="" class="img1" />
+        <p class="p0">
+          “ I’ve been interested in coding for a while but never taken the jump,
+          until now. I couldn’t recommend this course enough. I’m now in the job
+          of my dreams and so excited about the future. ”
+        </p>
+        <p class="p1">Tanya Sinclair <i>UX Engineer</i></p>
+        <p class="p2">John Tarkpor <i>Junior Front-end Developer</i></p>
+        <img name="myImages" src="images/image-tanya.jpg" alt="" class="img2" />
+        <div class="links">
+          <div class="link2">
+            <a href="#">
+              <img src="images/icon-prev.svg" alt="" class="prev-btn" />
+            </a>
+            <a href="#">
+              <img src="images/icon-next.svg" alt="" class="next-btn" />
+            </a>
+          </div>
+        </div>
+        <img src="images/pattern-bg.svg" alt="" class="img-style" />
+      </div>
+      <div class="rows">
+        <img src="images/pattern-curve.svg" alt="" />
+      </div>
+    </div>
+
+    <!-- 
+    <p>
+      “ I’ve been interested in coding for a while but never taken the jump,
+      until now. I couldn’t recommend this course enough. I’m now in the job of
+      my dreams and so excited about the future. ” Tanya Sinclair UX Engineer “
+      If you want to lay the best foundation possible I’d recommend taking this
+      course. The depth the instructors go into is incredible. I now feel so
+      confident about starting up as a professional developer. ” John Tarkpor
+      Junior Front-end Developer
+    </p> -->
+
+    <!-- <div class="attribution">
+      Challenge by
+      <a href="https://www.frontendmentor.io?ref=challenge" target="_blank"
+        >Frontend Mentor</a
+      >. Coded by <a href="#">Your Name Here</a>.
+    </div> -->
+    <script>
+      let i = 0;
+      let p = [];
+      let images = [];
+      let par = document.querySelector(".p1")[0];
+
+      // img lists
+      images[0] = "images/image-tanya.jpg";
+      images[1] = "images/image-john.jpg";
+
+      //descriptions
+      p[0] = `“ I’ve been interested in coding for a while but never taken the jump,
+          until now. I couldn’t recommend this course enough. I’m now in the job
+          of my dreams and so excited about the future. ”`;
+      p[1] = `"If you want to lay the best foundation possible I’d recommend taking
+          this course. The depth the instructors go into is incredible. I now
+          feel so confident about starting up as a professional developer."`;
+
+      // names
+      // par[0] = `Tanya Sinclair UX Engineer`;
+      // par[1] = `John Tarkpor Junior Front-end Developer`;
+
+      const onRightClick = () => {
+        document.myImages.src = images[i];
+        document.getElementsByTagName("p")[0].innerHTML = p[i];
+        // document.getElementsByTagName("p")[1].innerHTML = par[i];
+
+        if (i < images.length - 1 && i < p.length - 1) {
+          i++;
+        } else {
+          i = 0;
+        }
+
+        // setTimeout("onClick()", time);
+      };
+      const btn = document
+        .querySelector(".next-btn")
+        .addEventListener("click", onRightClick);
+
+      // const onLeftClick = () => {
+      //   document.myImages.src = images[i];
+      //   document.getElementsByTagName("p")[0].innerHTML = p[i];
+      //   // document.getElementsByTagName("p")[1].innerHTML = par[i];
+
+      //   if (i < images.length - 1 && i < p.length - 1) {
+      //     i--;
+      //   } else {
+      //     // i = 0;
+      //   }
+
+      //   // setTimeout("onClick()", time);
+      // };
+      // const leftBtn = document
+      //   .querySelector(".prev-btn")
+      //   .addEventListener("click", onLeftClick);
+    </script>
+  </body>
+</html>

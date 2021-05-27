@@ -1,0 +1,47 @@
+body{
+    background-color:  #110F14!important;
+}
+
+
+#myBox{
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 448px;
+    margin: auto;
+}
+
+.card-body{
+    background-color: #221B04;
+    padding: 10px!important;
+}
+
+.myColor{
+    color: #E4B71E;
+}
+/* header{
+    max-height: 432px;
+} */
+
+p{
+    font-size: small!important;
+}
+ 
+/* #myDiv{
+    position: absolute;
+    top: 393px;
+} */
+/* 
+#myDiv1{
+    background-color: blue;
+    position: relative;
+    top: 0px;
+    width: 53%;
+} */
+
+/* #myDiv2{
+    background-color: blue;
+    position: relative;
+    top: 45px;
+    width: 37%;
+} */
