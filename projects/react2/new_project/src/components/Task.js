@@ -7,10 +7,10 @@ const Task = ({ task, taskDel, toggle }) => {
   //   }
   return (
     <div>
-      {task.map((task) => (
+      {task.map((task, index) => (
         <div
           className={`task ${task.completed ? "task-remainder" : ""}`}
-          key={task.id}
+          key={index}
           onDoubleClick={() => toggle(task.id)}
         >
           <h3 className="task h3">

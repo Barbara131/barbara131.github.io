@@ -1,0 +1,351 @@
+body {
+  margin: 0;
+  font-family: "Spartan Medium";
+}
+.body---1 {
+  /* margin: 0px; */
+  font-size: 32px;
+  font-weight: 700;
+  width: 100%;
+  background-color: hsl(222, 26%, 31%);
+}
+.box---1 {
+  margin: 0 auto;
+  padding: 20px;
+  width: max-content;
+  color: white;
+  /* background-color: hsl(222, 26%, 31%); */
+}
+.button1 {
+  border-color: transparent;
+  cursor: pointer;
+  background-color: hsl(30, 25%, 89%);
+  border-radius: 10px;
+  box-shadow: 0px 4px hsl(28deg 16% 65%);
+  color: hsl(221, 14%, 31%);
+  font-size: smaller;
+  /* border: antiquewhite ridge 5px; */
+  padding: 10px;
+}
+.button---1 {
+  border-color: transparent;
+  cursor: pointer;
+  background-color: hsl(30, 25%, 89%);
+  border-radius: 10px;
+  box-shadow: 0px 4px hsl(28deg 16% 65%);
+  color: hsl(221, 14%, 31%);
+  font-size: smaller;
+  /* border: antiquewhite ridge 5px; */
+  padding: 10px;
+}
+.inputScore {
+  position: absolute;
+  width: fit-content;
+  height: fit-content;
+  font-size: 15px;
+  right: 0;
+  bottom: 0;
+  margin-right: 10px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  /* color: black; */
+}
+.currSign {
+  position: absolute;
+  font-size: 25px;
+  font-weight: 500;
+  margin-left: 25px;
+}
+button:active {
+  box-shadow: 0px 1px hsl(28deg 16% 65%);
+  transform: translateY(3px);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 65px;
+  /* float: right; */
+  /* width: 60px; */
+  /* padding-top: 20px; */
+  transform: scale(0.8);
+}
+.txt {
+  position: absolute;
+  left: -51px;
+  /* color: white; */
+}
+.themeToggle {
+  /* color: white; */
+  font-size: large;
+  margin: 0;
+  position: absolute;
+  right: 113px;
+  text-transform: uppercase;
+  /* font-size: ; */
+}
+.form-check-input {
+  width: 4em !important;
+  height: 2em !important;
+}
+.form-switch-a {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  right: -51px;
+  border-radius: 20px;
+  cursor: pointer;
+  background: hsl(223, 31%, 20%);
+  padding: 5px;
+  margin-top: 24px;
+  width: 19%;
+}
+
+.form-switch-a---1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  right: -51px;
+  border-radius: 20px;
+  cursor: pointer;
+  background: hsl(223, 31%, 20%);
+  padding: 5px;
+  margin-top: 24px;
+  width: 19%;
+}
+
+.form-switch-a1 input {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  opacity: 0;
+}
+
+.form-switch-a---1 input {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  opacity: 0;
+}
+
+/* .form-switch-a input:after {
+  background: transparent !important;
+} */
+.dot-check {
+  top: 2px;
+  bottom: 3px;
+  border-radius: 20px;
+  height: 20px;
+  width: 20px;
+  background-color: orange;
+  cursor: default;
+  opacity: 0;
+}
+.dot-check---1 {
+  top: 2px;
+  bottom: 3px;
+  border-radius: 20px;
+  height: 20px;
+  width: 20px;
+  background-color: orange;
+  cursor: default;
+  opacity: 0;
+}
+/* .new-button:hover  {
+  background-color: yellow;
+} */
+.dot-check:after {
+  border-radius: 20px;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  height: 11px;
+  width: 11px;
+  background-color: pink;
+}
+
+.new-button {
+  display: flex;
+  position: relative;
+  /* margin-bottom: 12px; */
+  cursor: pointer;
+  font-size: 22px;
+  user-select: none;
+}
+.new-button:hover input ~ .dot-check {
+  background-color: yellow;
+}
+
+.new-button input:checked ~ .dot-check {
+  background-color: hsl(6, 63%, 50%);
+  opacity: 1;
+}
+
+.new-button input:checked ~ .dot-check---1 {
+  background-color: hsl(6, 63%, 50%);
+  opacity: 1;
+}
+.numAlign {
+  position: absolute;
+  top: -29px;
+  padding: 4px;
+  /* color: white; */
+  font-size: small;
+}
+.calcPortion {
+  padding-top: 50px;
+}
+.row1 {
+  /* display: grid; */
+  display: flex;
+  margin-bottom: 27px;
+  justify-content: center;
+}
+.row---1 {
+  /* display: grid; */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 27px;
+  justify-content: center;
+  background-color: hsl(224, 36%, 15%);
+  border-radius: 5px;
+  height: 80px;
+  width: 100%;
+}
+.row1 input {
+  /* background-color: hsl(224, 36%, 15%); */
+  border-color: transparent;
+  border-radius: 5px;
+  color: white;
+  font-size: 32px;
+  height: 80px;
+  width: 100%;
+  text-align: end;
+}
+.row---1 input {
+  background-color: hsl(224, 36%, 15%);
+  border-color: transparent;
+  border-radius: 5px;
+  color: white;
+  font-size: 32px;
+  position: absolute;
+  top: 15px;
+  right: 0;
+  width: 85%;
+  /* height: 80px;
+  width: 98%; */
+  text-align: end;
+}
+
+.row---1 input:focus {
+  border: none;
+  outline: none;
+}
+.row---1 input:active {
+  border: none;
+  outline: none;
+}
+
+/* .main-disp-cont {
+  position: relative;
+  width: 100%;
+} */
+.row---1 input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.row2 {
+  display: grid;
+  grid-template-columns: 80px 80px 80px 80px;
+  text-align: center;
+  padding: 16px;
+  width: fit-content;
+  border-radius: 5px;
+  position: relative;
+  gap: 16px;
+  justify-content: center;
+  margin: 0 auto;
+  background-color: hsl(223, 31%, 20%);
+}
+
+.row2---1 {
+  display: grid;
+  grid-template-columns: 80px 80px 80px 80px;
+  text-align: center;
+  padding: 16px;
+  width: fit-content;
+  border-radius: 5px;
+  position: relative;
+  gap: 16px;
+  justify-content: center;
+  margin: 0 auto;
+  background-color: hsl(223, 31%, 20%);
+}
+/* .col {
+  background-color: hsl(30, 25%, 89%);
+  border-radius: 10px;
+  box-shadow: 0px 4px hsl(28deg 16% 65%);
+  color: hsl(221, 14%, 31%);
+  font-size: smaller;
+  border: antiquewhite ridge 5px;
+  padding: 10px;
+} */
+.item4 {
+  /* border-color: hsl(225, 21%, 49%); */
+  font-size: large;
+  padding-top: 16px;
+  background-color: hsl(225, 21%, 49%);
+  box-shadow: 0px 4px hsl(224, 28%, 35%);
+  color: white;
+}
+.item4---1 {
+  /* border-color: hsl(225, 21%, 49%); */
+  font-size: large;
+  padding-top: 16px;
+  background-color: hsl(225, 21%, 49%);
+  box-shadow: 0px 4px hsl(224, 28%, 35%);
+  color: white;
+}
+.item17 {
+  /* border-color: hsl(225, 21%, 49%); */
+  grid-column: 1 / 3;
+  font-size: large;
+  padding-top: 16px;
+  background-color: hsl(225, 21%, 49%);
+  box-shadow: 0px 4px hsl(224, 28%, 35%);
+  color: white;
+}
+.item17---1 {
+  /* border-color: hsl(225, 21%, 49%); */
+  grid-column: 1 / 3;
+  font-size: large;
+  padding-top: 16px;
+  background-color: hsl(225, 21%, 49%);
+  box-shadow: 0px 4px hsl(224, 28%, 35%);
+  color: white;
+}
+.item18 {
+  /* border-color: hsl(6, 63%, 50%); */
+  padding-top: 16px;
+  font-size: large;
+  grid-column: 3 / 5;
+  background-color: hsl(6, 63%, 50%);
+  box-shadow: 0px 4px hsl(6, 70%, 34%);
+  color: white;
+}
+.item18---1 {
+  /* border-color: hsl(6, 63%, 50%); */
+  padding-top: 16px;
+  font-size: large;
+  grid-column: 3 / 5;
+  background-color: hsl(6, 63%, 50%);
+  box-shadow: 0px 4px hsl(6, 70%, 34%);
+  color: white;
+}

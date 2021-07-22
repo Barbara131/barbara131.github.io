@@ -1,0 +1,19 @@
+{
+  "tasks": [
+    {
+      "title": "Meet with friends",
+      "completed": true,
+      "id": 2
+    },
+    {
+      "title": "Go out with friends",
+      "completed": false,
+      "id": 3
+    },
+    {
+      "title": "March on the ground for hours",
+      "completed": false,
+      "id": 4
+    }
+  ]
+}

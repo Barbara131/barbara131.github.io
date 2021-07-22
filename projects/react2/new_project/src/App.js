@@ -1,30 +1,31 @@
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import AddTask from "./components/AddTask";
 import "./components/myStyle.css";
-import { useState } from "react";
 import Task from "./components/Task";
 
 function App() {
   // console.log(task[currentTask]);
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Take out the laundry",
-      completed: true,
-    },
-    {
-      id: 2,
-      title: "Dinner with wife",
-      completed: true,
-    },
-    {
-      id: 3,
-      title: "Meeting with boss",
-      completed: false,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   const [showAddTask, setShowAddTask] = useState(false);
+
+  useEffect(() => {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks();
+      setTasks(tasksFromServer);
+    };
+    getTasks();
+  }, []);
+
+  // fetch tasks
+  const fetchTasks = async () => {
+    const res = await fetch("http://localhost:5000/tasks");
+    const data = await res.json();
+
+    console.log(data);
+    return data;
+  };
 
   //toggle
   const toggleTask = (id) => {
@@ -40,22 +41,35 @@ function App() {
   };
 
   // add task
-  const addTk = (task) => {
+  const addTk = async (task) => {
     // console.log(task);
-    const myId = Math.trunc(Math.random() * 100);
-    const newTasks = {
-      id: myId,
-      ...task,
-    };
-    console.log(newTasks);
-    setTasks([...tasks, newTasks]);
+    const res = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+
+    const data = await res.json();
+    setTasks([...tasks, data]);
+    // const myId = Math.trunc(Math.random() * 100);
+    // const newTasks = {
+    //   id: myId,
+    //   ...task,
+    // };
+    // console.log(newTasks);
+    // setTasks([...tasks, newTasks]);
   };
 
   // delete Task
-  const deleteTask = (num) => {
+  const deleteTask = async (id) => {
     // console.log("delete", id);
     // console.log(id);
-    setTasks(tasks.filter((task) => task.id !== num));
+    await fetch(`http://localhost:5000/tasks/${id}`, {
+      method: "DELETE",
+    });
+    setTasks(tasks.filter((task) => task.id !== id));
   };
   return (
     <div className="container">

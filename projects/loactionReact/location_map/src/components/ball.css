@@ -1,0 +1,56 @@
+.color {
+  position: relative;
+  z-index: 5;
+  border: 10px solid green;
+  margin: auto;
+  width: 426px;
+  height: fit-content;
+  /* display: flex;
+  flex-direction: row; */
+  justify-content: center;
+  overflow: hidden;
+}
+.balls {
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+  height: fit-content;
+  /* overflow: hidden; */
+  transition: 3s;
+  transform: translateX(20px);
+}
+.circle {
+  /* display: flex; */
+  /* flex-direction: row; */
+  position: relative;
+  width: 70px;
+  height: 70px;
+  color: aqua;
+  border-radius: 100px;
+  /* overflow: hidden; */
+  background-color: burlywood;
+
+  /* animation: move 5s linear 3s forwards; */
+  /* animation-delay: 1s;
+  animation-fill-mode: forwards; */
+}
+.prev {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+}
+
+.nxt {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+/* .color:hover .circle {
+  transform: translateX(-25%);
+}
+.circle:hover ~ .circle {
+  transform: translateX(25%);
+}
+.circle:hover {
+  transform: scale(1.5) !important;
+} */
