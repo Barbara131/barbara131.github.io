@@ -1,7 +1,9 @@
+import { fx } from "./fxAssets";
+import "./fx.css";
 import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 type Tab = "home" | "discover" | "competitions" | "wallet" | "profile";
-type Screen = Tab | "competition" | "register" | "registered" | "challenge" | "submit" | "arena" | "creator" | "leaderboard" | "results" | "notifications" | "earnings" | "judgeInvite" | "judgeAccepted" | "judgeEntry" | "judgeAwarded" | "judgeThanks";
+type Screen = Tab | "competition" | "register" | "registered" | "challenge" | "submit" | "arena" | "creator" | "leaderboard" | "results" | "notifications" | "earnings" | "judgeInvite" | "judgeAccepted" | "judgeEntry" | "judgeAwarded" | "judgeThanks" | "fans";
 type CompId = "bdm" | "dance" | "food" | "voice" | "comedy" | "face" | "kings";
 type Phase = "upcoming" | "registration" | "challenge" | "showcase" | "voting" | "closed" | "processing" | "results" | "completed";
 type Review = "none" | "pending" | "approved" | "rejected";
@@ -131,7 +133,7 @@ const e = (id: string, name: string, handle: string, image: string, votes: numbe
 
 const comps: Comp[] = [
   {
-    id: "bdm", name: "Best Dance Moves", category: "Dance", cadence: "DARENA Talent Season 1", image: photos.dance, prize: "₦500,000", contestants: 124, totalRounds: 5, safe: 5,
+    id: "bdm", name: "Best Dance Moves", category: "Dance", cadence: "DARENA Talent Season 1", image: fx.hubDance, prize: "₦500,000", contestants: 124, totalRounds: 5, safe: 5,
     about: "The Arena’s dance season. Afro, street, contemporary, freestyle — every style is welcome. Five rounds, a new challenge each time. Fans vote, the top dancers advance, and one Winner takes the crown.",
     phase: "registration", round: 1, time: "",
     schedule: [["Registration", "Oct 1–5"], ["Challenge", "Oct 6–10"], ["Showcase", "Oct 11"], ["Voting", "Oct 12–13"], ["Results", "Oct 14"]],
@@ -151,7 +153,7 @@ const comps: Comp[] = [
     ],
   },
   {
-    id: "dance", name: "Street Dance Cypher", category: "Dance", cadence: "Monthly", image: photos.dance, prize: "₦500,000", contestants: 1248, totalRounds: 3, safe: 5,
+    id: "dance", name: "Street Dance Cypher", category: "Dance", cadence: "Monthly", image: fx.arenaDance, prize: "₦500,000", contestants: 1248, totalRounds: 3, safe: 5,
     about: "Bring your most original routine to the Arena. Footwork, choreography and freestyle all count.",
     phase: "voting", round: 1, time: "2d 14h left",
     schedule: [["Submissions", "Oct 1–4"], ["Voting", "Oct 5–8"], ["Final", "Oct 20"]],
@@ -162,7 +164,7 @@ const comps: Comp[] = [
     ],
   },
   {
-    id: "food", name: "Kitchen Masters", category: "Food", cadence: "Monthly", image: photos.chef, prize: "₦300,000", contestants: 642, totalRounds: 3, safe: 4,
+    id: "food", name: "Kitchen Masters", category: "Food", cadence: "Monthly", image: fx.arenaCooking, prize: "₦300,000", contestants: 642, totalRounds: 3, safe: 4,
     about: "One dish, sixty seconds, no filters. Show the Arena how you cook — from jollof to fine dining.",
     phase: "showcase", round: 1, time: "5d 3h left",
     schedule: [["Submissions", "Oct 1–6"], ["Showcase", "Oct 7"], ["Voting", "Oct 8–10"]],
@@ -256,6 +258,73 @@ type ArenaCtx = {
 const ArenaContext = createContext<ArenaCtx | null>(null);
 const useArena = () => useContext(ArenaContext)!;
 
+/* ───────────────────────── Hi-fi design layer (Figma "Hifi" page) ───────────────────────── */
+
+const noiseVar = { "--fx-noise": `url("${fx.noise}")` } as React.CSSProperties;
+
+function FxIcon({ src, size = 24, style }: { src: string; size?: number; style?: React.CSSProperties }) {
+  return <span className="fxi" aria-hidden="true" style={{ width: size, height: size, WebkitMaskImage: `url("${src}")`, maskImage: `url("${src}")`, ...style }} />;
+}
+
+function Crop({ src, w, h, img, alt = "" }: { src: string; w: number; h: number; img: React.CSSProperties; alt?: string }) {
+  return <span style={{ position: "relative", display: "inline-block", width: w, height: h, overflow: "hidden", flex: "none" }}><img src={src} alt={alt} style={{ position: "absolute", maxWidth: "none", ...img }} /></span>;
+}
+const LogoMark = ({ size = 32 }: { size?: number }) => <Crop src={fx.logoMark} w={size} h={size * 1.0667} img={{ height: "129.95%", left: "-61.41%", top: "-11.17%", width: "208.7%" }} />;
+const LogoWord = () => <Crop src={fx.logoWordmark} w={132.9} h={24} alt="D-Arena" img={{ height: "367.31%", left: "-15.63%", top: "-213.46%", width: "132.64%" }} />;
+
+function FxLoader({ label = "Loading..." }: { label?: string }) {
+  return (
+    <div className="fx-loader" role="status">
+      <div className="fx-loader-spin"><img className="ring" src={fx.loaderRing} alt="" /><span style={{ position: "absolute", left: 30, top: 26 }}><Crop src={fx.logoMark} w={19.7} h={21} img={{ height: "129.95%", left: "-61.41%", top: "-11.17%", width: "208.7%" }} /></span></div>
+      {label}
+    </div>
+  );
+}
+const FxBusy = ({ label }: { label?: string }) => <div className="fx-loading-veil"><FxLoader label={label} /></div>;
+
+function FxEmpty({ art, bell, icon, title, copy, action, onClick }: { art?: string; bell?: boolean; icon?: string; title: string; copy: string; action?: string; onClick?: () => void }) {
+  return (
+    <div className="fx-empty">
+      <div className="art">{bell ? <img className="bell" src={fx.bellOff} alt="" /> : art ? <img src={art} alt="" /> : <FxIcon src={icon ?? fx.iSearchNormal} size={34} style={{ color: "var(--gold50)" }} />}</div>
+      <strong>{title}</strong>
+      <p>{copy}</p>
+      {action && onClick && <button className="fx-btn md" onClick={onClick}>{action}</button>}
+    </div>
+  );
+}
+
+const Verified = ({ size = 20 }: { size?: number }) => <img src={fx.verified} width={size} height={size} alt="Verified" />;
+const Back = ({ onClick, ring, close }: { onClick: () => void; ring?: boolean; close?: boolean }) => (
+  <button className={`fx-circle ${ring ? "ring-fill" : ""}`} onClick={onClick} aria-label={close ? "Close" : "Go back"}><FxIcon src={close ? fx.iClose : fx.iArrowLeft} /></button>
+);
+const kfmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, "")}k` : `${n}`);
+
+type ViewItem = { image: string; handle: string; avatar: string; time: string; caption: string; tags?: string; likes: number; comments: number; shares: number; comp?: CompId };
+
+function FxViewer({ v, onClose }: { v: ViewItem; onClose: () => void }) {
+  const a = useArena();
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const c = v.comp ? a.comp(v.comp) : null;
+  return (
+    <div className="fx fx-viewer" role="dialog" aria-label={`Post by ${v.handle}`}>
+      <img className="bg" src={v.image} alt="" />
+      <Back onClick={onClose} />
+      <div className="rail">
+        <button className={liked ? "on" : ""} onClick={() => setLiked(!liked)} aria-label="Like"><FxIcon src={liked ? fx.iHeartBold : fx.iHeart} size={28} />{kfmt(v.likes + (liked ? 1 : 0))}</button>
+        <button onClick={() => a.toast("Comments opened")} aria-label="Comments"><FxIcon src={fx.iMsg} size={28} />{v.comments}</button>
+        <button onClick={() => a.toast("Share link copied")} aria-label="Share"><FxIcon src={fx.iSend} size={28} />{v.shares}</button>
+        <button className={saved ? "on" : ""} onClick={() => { setSaved(!saved); a.toast(saved ? "Removed from saved" : "Saved to your collection"); }} aria-label="Save"><FxIcon src={fx.iBookmark} size={28} /></button>
+      </div>
+      <div className="info">
+        <div className="who"><img className="fx-avatar" src={v.avatar} width={50} height={50} alt="" /><div><b>{v.handle}<Verified /></b><small>{v.time} ago</small></div></div>
+        <p>{v.caption}{v.tags && <b>{v.tags}</b>}</p>
+        {c && <button className="fx-btn" onClick={() => { onClose(); a.go(c.phase === "voting" ? { screen: "arena", comp: c.id, entry: 0 } : { screen: "competition", comp: c.id }); }}>{c.phase === "voting" ? "Vote" : "View competition"}</button>}
+      </div>
+    </div>
+  );
+}
+
 /* ───────────────────────── Splash ───────────────────────── */
 
 function Splash({ onDone }: { onDone: () => void }) {
@@ -263,27 +332,13 @@ function Splash({ onDone }: { onDone: () => void }) {
   const finish = () => { if (leaving) return; setLeaving(true); window.setTimeout(onDone, 650); };
   useEffect(() => { const t = window.setTimeout(finish, 3600); return () => window.clearTimeout(t); });
   return (
-    <div className={`splash ${leaving ? "leaving" : ""}`} onClick={finish} role="button" aria-label="Enter D-Arena">
-      <img className="splash-photo" src={photos.stage} alt="" />
-      <div className="splash-veil" />
-      <div className="splash-beam one" /><div className="splash-beam two" />
-      <div className="splash-grain" />
-      <div className="splash-center">
-        <div className="splash-mark">
-          <svg viewBox="0 0 100 100" aria-hidden="true">
-            <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c9a45c" /><stop offset="1" stopColor="#8a7a5c" /></linearGradient></defs>
-            <path className="mark-outline" d="M50 4 96 50 50 96 4 50Z" />
-            <path className="mark-fill" d="M50 14 86 50 50 86 14 50Z" />
-          </svg>
-          <span>D</span>
-        </div>
-        <div className="splash-word" aria-label="D-Arena">{"D—ARENA".split("").map((ch, i) => <span key={i} style={{ animationDelay: `${1.05 + i * 0.07}s` }}>{ch}</span>)}</div>
-        <p className="splash-tag">Where talent takes the stage</p>
-      </div>
-      <div className="splash-foot"><div className="splash-bar"><i /></div><span>SEASON 03 · LAGOS</span></div>
+    <div className={`splash fx-splash ${leaving ? "leaving" : ""}`} onClick={finish} role="button" aria-label="Enter D-Arena">
+      <img className="fx-splash-bg" src={fx.splashBg} alt="" />
+      <img className="fx-splash-logo" src={fx.logoFull} alt="D-Arena. Where talent ignites the world" />
     </div>
   );
 }
+
 
 /* ───────────────────────── Shared pieces ───────────────────────── */
 
@@ -378,55 +433,70 @@ function Accordion({ items, startClosed }: { items: [string, string][]; startClo
 
 /* ───────────────────────── Competitions hub ───────────────────────── */
 
-function HubCard({ c }: { c: Comp }) {
+function ArenaRailCard({ c }: { c: Comp }) {
   const a = useArena();
-  const saved = a.saved.includes(c.id);
-  const left = c.phase === "upcoming" ? c.time : c.phase === "completed" ? "Ended" : c.time || phaseLabel(c.phase, c.round);
+  const cta = getCta(c, a.journey);
+  const followed = a.following.includes(c.id);
+  const label = cta.action === "register" ? "Join" : cta.action === "notify" ? (followed ? "Following" : "Notify me") : cta.action === "vote" ? "Vote" : cta.label.replace("View ", "");
+  const open = () => a.go({ screen: "competition", comp: c.id });
   return (
-    <article className="hub-card" onClick={() => a.go({ screen: "competition", comp: c.id })}>
-      <img src={c.image} alt="" />
-      <div className="hub-shade" />
-      <div className="hub-top">
-        <span className="hub-time"><i className={`live-dot ${stageInfo(c).tone}`} />{arenaOpen(c.phase) ? stageInfo(c).label : left}</span>
-        <button className={saved ? "hub-save on" : "hub-save"} aria-label={saved ? "Remove bookmark" : "Bookmark competition"} onClick={(ev) => { ev.stopPropagation(); a.toggleSave(c.id); }}><Icon name="bookmark" size={15} filled={saved} /></button>
+    <div className="fx-arena-card" role="button" tabIndex={0} onClick={open} onKeyDown={(ev) => ev.key === "Enter" && open()} aria-label={`Open ${c.name}`}>
+      <img className="bg" src={c.image} alt="" />
+      <span className="time"><FxIcon src={fx.iClock} size={20} />{c.time || stageInfo(c).label}</span>
+      <div className="bottom">
+        <strong>{c.name}</strong>
+        <div className="row"><span className="joined"><FxIcon src={fx.iUsers} size={16} />{kfmt(c.contestants)} joined</span><button className="join" onClick={(ev) => { ev.stopPropagation(); a.act(c, cta.action); }}>{label}</button></div>
       </div>
-      <div className="hub-copy">
-        <small>{c.category}</small>
-        <h3>{c.name}</h3>
-        <span className="hub-people"><Icon name="users" size={11} />{c.contestants.toLocaleString()} contestants</span>
-        <div className="hub-foot"><strong>{c.prize}</strong><i><Icon name="arrow" size={14} /></i></div>
-      </div>
-      {c.id === "bdm" && a.journey.registered && <b className="hub-you">YOU’RE IN</b>}
-    </article>
+    </div>
   );
+}
+
+function CompCard({ c }: { c: Comp }) {
+  const a = useArena();
+  const st = stageInfo(c);
+  return (
+    <button className="fx-comp-card" onClick={() => a.go({ screen: "competition", comp: c.id })} aria-label={`Open ${c.name}`}>
+      <img className="bg" src={c.image} alt="" />
+      <span className="tag"><i className={c.phase === "voting" ? "live" : ""} />{st.label}</span>
+      {c.id === "bdm" && a.journey.registered && <span className="you">YOU’RE IN</span>}
+      <span className="foot">
+        <span className="ci">
+          <strong>{c.name}</strong>
+          <span className="fx-meta"><FxIcon src={fx.iCalendar} size={20} />Date: <em>{passDates(lobbySchedule(c))}</em></span>
+          <span className="fx-meta"><FxIcon src={fx.iTicket} size={20} />Fee: <em>FREE</em></span>
+        </span>
+        <span className="go"><FxIcon src={fx.iArrowRight} /></span>
+      </span>
+    </button>
+  );
+}
+
+function HubCard({ c }: { c: Comp }) {
+  return <CompCard c={c} />;
 }
 
 function CompetitionsPage() {
   const a = useArena();
   const [tab, setTab] = useState("Ongoing");
-  const [cat, setCat] = useState("All");
   const [q, setQ] = useState("");
   const groups: Record<string, CompId[]> = { Ongoing: ["bdm", "dance", "food", "voice", "comedy"], Upcoming: ["face"], Past: ["kings"] };
-  const pool = groups[tab].map(a.comp);
-  const cats = ["All", ...Array.from(new Set(pool.map((c) => c.category)))];
-  const list = pool.filter((c) => (cat === "All" || c.category === cat) && (c.name + c.category).toLowerCase().includes(q.trim().toLowerCase()));
+  const list = groups[tab].map(a.comp).filter((c) => (c.name + c.category).toLowerCase().includes(q.trim().toLowerCase()));
   return (
-    <>
-      <header className="topbar">
-        <div className="topbar-side"><div className="brand-mark"><span>D</span></div></div>
-        <h1 className="page-title">Competitions</h1>
-        <div className="topbar-side end"><button className="icon-button notify" aria-label="Notifications" onClick={() => a.go({ screen: "notifications" })}><Icon name="bell" /><i /></button></div>
-      </header>
-      <main className="page hub">
-        <p className="hub-sub">Find a challenge. Watch the talent. Support your favourites.</p>
-        <div className="search-box hub-search"><Icon name="search" size={18} /><input value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Search competitions" />{q && <button className="plain" onClick={() => setQ("")} aria-label="Clear"><Icon name="x" size={15} /></button>}</div>
-        <div className="segmented">{Object.keys(groups).map((item) => <button key={item} className={tab === item ? "active" : ""} onClick={() => { setTab(item); setCat("All"); }}>{item}</button>)}</div>
-        {cats.length > 2 && <div className="chip-row">{cats.map((x) => <button key={x} className={cat === x ? "chip active" : "chip"} onClick={() => setCat(x)}>{x}</button>)}</div>}
-        {list.length ? <div className="hub-grid">{list.map((c) => <HubCard key={c.id} c={c} />)}</div> : <EmptyState title={q ? "No competitions match" : "Nothing here yet"} copy={q ? `We couldn’t find “${q}”. Try a category like Dance or Food.` : "New competitions are announced every week. Check Upcoming."} action={q ? "Clear search" : "See ongoing"} onClick={() => { setQ(""); setTab("Ongoing"); }} />}
-      </main>
-    </>
+    <div className="fx">
+      <header className="fx-pagehead"><h1>Competitions Hub</h1><p>Find a challenge. Watch the talent.</p></header>
+      <div style={{ display: "grid", gap: 24, marginTop: 24 }}>
+        <label className="fx-search"><FxIcon src={fx.iSearchNormal} size={18} /><input value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Search for competitions" aria-label="Search for competitions" />{q && <button onClick={() => setQ("")} aria-label="Clear search"><FxIcon src={fx.iClose} size={18} /></button>}</label>
+        <nav className="fx-tabs even">{Object.keys(groups).map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t} ({groups[t].length})</button>)}</nav>
+      </div>
+      {list.length ? (
+        <div className="fx-hub-list">{list.map((c, i) => <div key={c.id} style={{ display: "grid", gap: 18 }}>{i > 0 && <div className="fx-hub-sep" />}<CompCard c={c} /></div>)}</div>
+      ) : (
+        <FxEmpty icon={fx.iCup} title={q ? "No competitions match" : "No competitions here yet"} copy={q ? `We couldn’t find “${q}”. Try a category like Dance or Comedy.` : "New competitions are announced every week."} action={q ? "Clear search" : "View ongoing competitions"} onClick={() => { setQ(""); setTab("Ongoing"); }} />
+      )}
+    </div>
   );
 }
+
 
 /* ───────────────────────── Competition detail ───────────────────────── */
 
@@ -746,100 +816,96 @@ function CompetitionDetail({ route }: { route: Route }) {
   const j = a.journey;
   const isBdm = c.id === "bdm";
   const contestant = isBdm && j.registered;
-  const areas: LobbyArea[] = ["Overview", "Rules", "Leaderboard", "Results", ...(contestant ? (["My Journey"] as LobbyArea[]) : [])];
-  const [area, setAreaState] = useState<LobbyArea | null>(route.tab && areas.includes(route.tab as LobbyArea) ? (route.tab as LobbyArea) : null);
-  const setArea = (t: LobbyArea | null) => { setAreaState(t); a.patch({ tab: t ?? undefined }); };
-  const st = stageInfo(c);
+  const tabs: LobbyArea[] = ["Overview", "Rules", "Leaderboard", "Results", ...(contestant ? (["My Journey"] as LobbyArea[]) : [])];
+  const [tab, setTabState] = useState<LobbyArea>(route.tab && tabs.includes(route.tab as LobbyArea) ? (route.tab as LobbyArea) : "Overview");
+  const setTab = (t: LobbyArea) => { setTabState(t); a.patch({ tab: t }); };
+  const [more, setMore] = useState(false);
+  const [rule, setRule] = useState(0);
   const open = arenaOpen(c.phase);
   const openArena = (entry?: number) => a.go({ screen: "arena", comp: c.id, entry });
   const join = () => a.go({ screen: "register", comp: c.id });
   const me = c.entries.find((x) => x.id === "me");
   const out = j.phase === "results" && j.outcome === "eliminated";
-  const arenaCta: [string, () => void] = open ? ["Enter the Arena", () => openArena()] : ["Preview the Arena", () => openArena()];
-  let second: [string, string, () => void] | null = null;
+  let second: [string, () => void] | null = null;
   if (contestant) {
-    if (out) second = ["View Results", "Your journey has ended — take a seat in the audience", () => setArea("Results")];
-    else if (j.submitted && j.review === "approved" && me) second = ["View My Entry", "Your entry is on stage", () => openArena(c.entries.indexOf(me))];
-    else if (j.submitted) second = ["View My Entry", j.review === "rejected" ? "Needs attention" : "Under review", () => setArea("My Journey")];
-    else second = ["Continue Competition", "Your challenge is waiting backstage", () => setArea("My Journey")];
-  } else if (regOpen(c)) second = ["Register to Compete", c.phase === "showcase" ? "Late entries close when voting opens" : "Registration is open", join];
-  const ranked = rankList(a.votesOf, c);
+    if (out) second = ["View your results", () => setTab("Results")];
+    else if (j.submitted && j.review === "approved" && me) second = ["View my entry", () => openArena(c.entries.indexOf(me))];
+    else if (j.submitted) second = ["View my entry", () => setTab("My Journey")];
+    else second = ["Continue competition", () => setTab("My Journey")];
+  } else if (regOpen(c)) second = ["Register now", join];
   const sched = lobbySchedule(c);
-  const last = lastDoneRound(c);
-  const live = c.phase === "showcase" || c.phase === "voting";
-  const tilesRef = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-  useEffect(() => {
-    const el = tilesRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") { setInView(true); return; }
-    const io = new IntersectionObserver(([en]) => { if (en.isIntersecting) { setInView(true); io.disconnect(); } }, { rootMargin: "0px 0px -28% 0px", threshold: 0 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  const pick = (i: number) => openArena(i);
-  const teasers: Record<string, React.ReactNode> = {
-    Overview: `${isBdm ? "₦500,000" : c.prize} grand prize · ${c.totalRounds} rounds`,
-    Rules: "How the show is judged",
-    Leaderboard: <span className="lt-mini">{(votingVisible(c.phase) ? ranked : c.entries).slice(0, 3).map((x) => <img key={x.id} src={x.image} alt="" />)}<i className={`live-dot ${c.phase === "voting" ? "live" : "muted"}`} />{c.phase === "voting" ? "LIVE" : votingVisible(c.phase) ? "FINAL" : "Opens soon"}</span>,
-    Results: last ? `Round ${last} results are in` : "First results after voting",
-  };
-  const content = (k: LobbyArea) => {
-    switch (k) {
-      case "Overview": return <Programme c={c} />;
-      case "Rules": return <NoticeBoard c={c} />;
-      case "Leaderboard": return <BigScreen c={c} onPick={pick} full={() => a.go({ screen: "leaderboard", comp: c.id })} />;
-      case "Results": return <AnnouncementsStage c={c} onPick={pick} full={() => a.go({ screen: "results", comp: c.id })} />;
+  const nowKey = lobbyNow(c);
+  const ranked = rankList(a.votesOf, c);
+  const live = c.phase === "voting";
+  const onsite = isBdm || c.id === "kings" || c.id === "voice";
+  const star = <img src={fx.star} alt="" />;
+  const body = (() => {
+    switch (tab) {
+      case "Overview": return <>
+        <section className="fx-about"><h3 className="fx-label">{star}About</h3><p className={more ? "" : "clamp"}>{c.about}</p><button onClick={() => setMore(!more)}>{more ? "See less" : "See more"}</button></section>
+        <div className="fx-facts"><div><small>Grand Prize</small><b className="gold">{c.prize}</b></div><div><small>Contestants</small><b>{c.contestants.toLocaleString()}</b></div><div><small>Rounds</small><b>{c.totalRounds}</b></div><div><small>Category</small><b>{c.category}</b></div></div>
+        <section><h3 className="fx-label">{star}Schedule</h3><div className="fx-sched">{sched.map(([k, v], i) => <div key={k} className={i === nowKey ? "now" : i < nowKey ? "past" : ""}><span>{k}</span><i /><span>{v}</span></div>)}</div></section>
+      </>;
+      case "Rules": return <section>
+        <h3 className="fx-label">How this competition works</h3>
+        <div className="fx-acc" style={{ marginTop: 8 }}>{houseRules(c).map(([t, b], i) => <div key={t} className={rule === i ? "open" : ""}><button onClick={() => setRule(rule === i ? -1 : i)} aria-expanded={rule === i}>{t}<Icon name="down" size={20} /></button>{rule === i && <p>{b}</p>}</div>)}</div>
+      </section>;
+      case "Leaderboard": return !votingVisible(c.phase) ? (
+        <FxEmpty art={fx.voteClosed} title={c.phase === "showcase" ? "Voting not open yet" : "No rankings yet"} copy={c.phase === "showcase" ? "Voting opens after every contestant has taken the stage." : "The leaderboard goes live the moment the audience starts voting."} />
+      ) : <>
+        <div className="fx-lb-note"><span>Round {c.round} · {rName(c.id, c.round)}</span>{live ? <b><i />LIVE · updated just now</b> : <b>Final standings</b>}</div>
+        <div className="fx-lb">{ranked.map((en, i) => (
+          <button key={en.id} className={`${i < 3 ? "top" : ""} ${en.id === "me" ? "me" : ""}`} onClick={() => openArena(c.entries.indexOf(en))}>
+            <b className="rank">{i + 1}</b><img src={en.image} alt="" />
+            <span className="n"><strong>{en.id === "me" ? "You" : en.handle}</strong><span>{en.name}</span></span>
+            <em>{fmt(a.votesOf(c.id, en))}<small>votes</small></em>
+            <span className={`tr ${en.trend}`} aria-label={en.trend === "up" ? "Rising" : en.trend === "down" ? "Falling" : "Stable"}><Icon name={en.trend === "up" ? "rise" : en.trend === "down" ? "fall" : "flat"} size={14} /></span>
+          </button>
+        ))}</div>
+        <button className="fx-btn md outline" onClick={() => a.go({ screen: "leaderboard", comp: c.id })}>Full leaderboard</button>
+      </>;
+      case "Results": return <div style={{ display: "grid", gap: 16 }}>{Array.from({ length: c.totalRounds }, (_, i) => i + 1).map((r) => {
+        const done = roundDone(c, r);
+        const cur = r === c.round && !done && c.phase !== "upcoming";
+        const locked = !done && !cur && r > c.round + 1;
+        return (
+          <div key={r} className={`fx-round ${cur ? "cur" : ""} ${locked ? "locked" : ""}`}>
+            <div className="top"><div><small>{r === c.totalRounds && c.totalRounds > 1 ? "Final" : `Round ${r}`}</small><strong>{rName(c.id, r)}</strong></div><span className={`fx-pill ${cur ? "gold" : done ? "done" : ""}`}>{locked && <Icon name="lock" size={12} />}{done ? "Results out" : cur ? "Current" : "Upcoming"}</span></div>
+            {cur && <p>{c.phase === "closed" || c.phase === "processing" ? "Voting closed. Results are being confirmed." : "No results yet. Results are published after voting closes."}</p>}
+            {done && <><p>{c.phase === "completed" && r === c.totalRounds ? `Winner: ${ranked[0]?.handle ?? "TBA"}` : `Top 3: ${ranked.slice(0, 3).map((x) => (x.id === "me" ? "You" : x.handle)).join(", ")}`}</p><button className="fx-btn md outline" onClick={() => a.go({ screen: "results", comp: c.id })}>View results</button></>}
+          </div>
+        );
+      })}</div>;
       default: return <div className="lp-journey"><JourneyPanel c={c} openArena={openArena} /></div>;
     }
-  };
+  })();
   return (
-    <>
-      <div className="cd-hero lobby-hero">
-        <img src={c.image} alt={`${c.name} stage`} />
-        <div className="cd-shade" />
-        <span className="lh-beam b1" aria-hidden="true" /><span className="lh-beam b2" aria-hidden="true" /><span className="lh-beam b3" aria-hidden="true" />
-        <button className="floating-back" onClick={a.back} aria-label="Go back"><Icon name="back" /></button>
-        <div className="floating-right">{isBdm && <HostButton />}<button className="floating-round" onClick={() => a.toast("Show link copied")} aria-label="Share show"><Icon name="share" size={19} /></button></div>
-        <div className="cd-title">
-          <div className="lh-badges">
-            {live ? <span className="lh-live"><i className="live-dot live" />LIVE</span> : <span className="cd-badge"><i className={`live-dot ${st.tone}`} />{st.label.toUpperCase()}</span>}
-            <span className="lh-aud"><Icon name="users" size={12} />{open ? "12.4K in the audience" : "2.1K waiting at the gates"}</span>
-          </div>
-          <p className="lh-round">ROUND {c.round} · {rName(c.id, c.round).toUpperCase()}</p>
+    <div className="fx fx-detail">
+      <div className="fx-hero">
+        <img className="bg" src={c.image} alt={`${c.name} stage`} />
+        <div className="bar"><Back ring onClick={a.back} /><div>{isBdm && <HostButton />}<button className="fx-circle ring-fill" onClick={() => a.toast("Competition link copied")} aria-label="Share competition"><FxIcon src={fx.iShare} /></button></div></div>
+        <span className="fx-status"><i className={live ? "live" : ""} />{phaseLabel(c.phase, c.round)}</span>
+      </div>
+      <div className="fx-dhead">
+        <div>
           <h1>{c.name}</h1>
-          <p className="lh-season">{c.cadence}</p>
+          <div className="meta">
+            <span className="fx-meta"><FxIcon src={fx.iLocation} />Location: <b>{onsite ? "Onsite" : "Online"}</b></span>
+            <span className="fx-meta"><FxIcon src={fx.iCalendar} />Date: <b>{passDates(sched)}</b></span>
+          </div>
         </div>
+        <span className="fee"><FxIcon src={fx.iMoneys} />FREE</span>
       </div>
-      <main className="venue-lobby">
-        <div className="event-pass">
-          <div><small>LIVE FROM</small><strong>Lagos</strong></div>
-          <div><small>DATES</small><strong>{passDates(sched)}</strong></div>
-          <div><small>ENTRY</small><strong className="gold">Free</strong></div>
-        </div>
-        <div className="lobby-label"><span>EXPLORE THE SHOW</span><p>Find out everything before the curtain goes up.</p></div>
-        <div className="lobby-tiles" ref={tilesRef}>
-          {lobbyTiles.map((t, i) => <LobbyTile key={t.k} t={t} i={i} inView={inView} teaser={teasers[t.k]} onOpen={() => setArea(t.k)} />)}
-        </div>
-        <section className="passes">
-          <button className="pass audience" onClick={arenaCta[1]}>
-            <div className="pass-main"><small>YOUR PLACE IN THE AUDIENCE</small><strong>{arenaCta[0]}</strong><p>{open ? "Watch, vote and send gifts. No registration needed." : "The showcase hasn’t started. Take a look inside."}</p></div>
-            <div className="pass-stub"><span>{a.seat ? a.seat.replace(" · ", "\n") : "ANY\nSEAT"}</span><Icon name="arrow" size={16} /></div>
-          </button>
-          <button className="pass stage" data-tile="My Journey" disabled={!second} onClick={second?.[2]}>
-            <div className="pass-main"><small>YOUR PLACE ON THE STAGE</small><strong>{second ? second[0] : "Register to Compete"}</strong><p>{second ? second[1] : "Registration is closed for this season."}</p></div>
-            <div className="pass-stub"><span>{contestant ? "ON\nSTAGE" : second ? "ADMIT\nONE" : "SOLD\nOUT"}</span>{second ? <Icon name="arrow" size={16} /> : <Icon name="lock" size={14} />}</div>
-          </button>
-        </section>
-      </main>
-      <div className="sticky-action lobby">
-        <button className="primary" onClick={arenaCta[1]}><Icon name="eye" size={17} /> {arenaCta[0]}</button>
-        {second ? <button className="lobby-second" onClick={second[2]}><strong>{second[0]}</strong><small>{contestant ? "Backstage" : "Join as a contestant"}</small></button>
-          : isBdm && !contestant ? <p className="lobby-note">Registration closed · watch, vote and support</p> : null}
+      <nav className="fx-tabs">{tabs.map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t}</button>)}</nav>
+      <div className="fx-dbody" key={tab}>{body}</div>
+      <div className="fx-cta">
+        <button className="fx-btn dark" onClick={() => openArena()}>{open ? "Enter the Arena" : "Preview the Arena"}</button>
+        {second ? <button className="second" onClick={second[1]}>{contestant ? <b>{second[0]}</b> : <>Want to compete? <b>{second[0]}</b></>}</button> : <span className="note">Registration closed · watch, vote and support</span>}
       </div>
-      {area && <LobbyPopup area={area} areas={areas} onClose={() => setArea(null)} onSwitch={(k) => setArea(k)}>{content(area)}</LobbyPopup>}
-    </>
+    </div>
   );
 }
+
 
 function LockedNote({ icon, title, copy }: { icon: string; title: string; copy: string }) {
   return <div className="locked-note"><span><Icon name={icon} size={22} /></span><strong>{title}</strong><p>{copy}</p></div>;
@@ -1373,36 +1439,41 @@ function CreatorProfile({ route }: { route: Route }) {
   const c = a.comp(route.comp ?? "bdm");
   const i = c.entries.findIndex((x) => x.handle === route.handle);
   const en = c.entries[i];
-  const [tab, setTab] = useState("Competition Entries");
-  if (!en) return <><SubBar title="Creator" onBack={a.back} /><main className="page"><LockedNote icon="user" title="Profile unavailable" copy="This creator’s profile couldn’t be loaded." /></main></>;
+  const [tab, setTab] = useState("Activity");
+  const [view, setView] = useState<ViewItem | null>(null);
+  if (!en) return <div className="fx"><header className="fx-navhead"><Back onClick={a.back} /><h1>Creator</h1><span /></header><FxEmpty title="Profile unavailable" copy="This creator’s profile couldn’t be loaded." /></div>;
   const f = a.followsCreator(en.handle);
   const ranked = rankList(a.votesOf, c);
   const first = en.name.split(" ")[0];
   return (
-    <>
-      <SubBar title={en.handle} onBack={a.back} />
-      <main className="page creator-page">
-        <div className="cp-head">
-          <img src={en.image} alt={en.name} />
-          <h1>{en.name} <b className="verified">✓</b></h1>
-          <p>{en.handle} · Dancer · Lagos, NG</p>
-          <span>{first} moves with intention — Afro, contemporary and everything in between. Teaching Saturdays in Yaba.</span>
-          <div className="profile-stats"><button><b>{fmt(Math.round(en.votes * 3.1) + (f ? 1 : 0))}</b><small>Followers</small></button><button><b>{200 + (en.votes % 400)}</b><small>Following</small></button><button><b>{fmt(en.votes * 9)}</b><small>Likes</small></button></div>
-          <div className="cp-actions"><button className={f ? "ghost-btn" : "primary"} onClick={() => a.toggleCreator(en.handle)}>{f ? <><Icon name="check" size={15} /> Following</> : "Follow"}</button><button className="ghost-btn icon" onClick={() => a.toast("Profile link copied")} aria-label="Share"><Icon name="share" size={17} /></button></div>
+    <div className="fx fx-prof">
+      <div className="bar"><Back onClick={a.back} /><button className="fx-circle" onClick={() => a.toast("Profile link copied")} aria-label="More options"><FxIcon src={fx.iMore} /></button></div>
+      <div className="fx-pover"><img src={en.image} alt={en.name} /><div className="fx-stats"><button><b>{kfmt(Math.round(en.votes * 3.1) + (f ? 1 : 0))}</b><small>fans</small></button><i /><button onClick={() => setTab("Posts")}><b>{40 + (en.votes % 60)}</b><small>posts</small></button></div></div>
+      <div className="fx-pid"><strong>{en.name} <Verified /></strong><span>{en.handle}</span><p>{first} moves with intention: Afro, contemporary and everything in between. Teaching Saturdays in Yaba.</p></div>
+      <div className="fx-pact"><button className={`fx-btn md ${f ? "grey" : ""}`} onClick={() => a.toggleCreator(en.handle)}>{f ? "Following" : "Follow"}</button></div>
+      <nav className="fx-tabs even fx-prof-tabs">{["Activity", "Posts"].map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t}</button>)}</nav>
+      {tab === "Activity" ? (
+        <div className="fx-activity">
+          <div className="fx-act">
+            <span className="kind"><FxIcon src={fx.iMagic} size={18} />Competition entry · {c.name}</span>
+            <div className="uh"><img src={en.image} alt="" /><div><b>{en.name}<span>{en.handle}</span></b><small>Round {c.round} · {votingVisible(c.phase) ? `${fmt(a.votesOf(c.id, en))} votes · #${ranked.indexOf(en) + 1}` : "Showcased"}</small></div></div>
+            <p>{en.caption}</p>
+            <button className="fx-media" onClick={() => a.backTo({ screen: "arena", comp: c.id, entry: i })} aria-label="Watch in the Arena"><img className="bg" src={en.image} alt="" /><span className="ctrl"><img src={fx.iPlayCircle} alt="" /><span className="vol"><img src={fx.iVolume} alt="" /></span></span></button>
+          </div>
         </div>
-        <div className="tabs profile-tabs">{["Posts", "Competition Entries"].map((t) => <button key={t} className={tab === t ? "active" : ""} onClick={() => setTab(t)}>{t}</button>)}</div>
-        {tab === "Competition Entries" ? (
-          <button className="cp-entry" onClick={() => a.backTo({ screen: "arena", comp: c.id, entry: i })}>
-            <img src={en.image} alt="" />
-            <div className="tile-gradient" />
-            <span className="tile-play"><Icon name="play" filled size={18} /></span>
-            <div><p>{c.name.toUpperCase()}</p><strong>Round {c.round}</strong><span>{votingVisible(c.phase) ? `${fmt(a.votesOf(c.id, en))} votes · #${ranked.indexOf(en) + 1}` : "Showcased"} · Watch in Arena</span></div>
+      ) : (
+        <div className="fx-grid2" style={{ margin: "0 -16px" }}>{gallery.slice(i % 4, (i % 4) + 6).map((g, k) => (
+          <button className="fx-ccard" key={g.title} onClick={() => setView({ image: g.image, handle: en.handle, avatar: en.image, time: `${k + 1}d`, caption: g.title, likes: 300 + k * 41, comments: 12 + k, shares: 4 + k })}>
+            <span className="m"><img src={g.image} alt={g.title} /><span className="views"><FxIcon src={fx.iPlay} size={18} />{g.views}</span></span>
+            <span className="i"><p>{g.title}</p><span className="u"><img className="fx-avatar" src={en.image} width={30} height={30} alt="" /><span>{en.handle}</span></span></span>
           </button>
-        ) : <div className="profile-grid">{gallery.slice(i % 4, (i % 4) + 6).map((g) => <img key={g.title} src={g.image} alt="" />)}</div>}
-      </main>
-    </>
+        ))}</div>
+      )}
+      {view && <FxViewer v={view} onClose={() => setView(null)} />}
+    </div>
   );
 }
+
 
 function JourneyPanel({ c, openArena }: { c: Comp; openArena: (i?: number) => void }) {
   const a = useArena();
@@ -2380,38 +2451,40 @@ function ProfileArenas() {
   );
 }
 
-const feedPosts = [
-  { id: "p1", name: "Zuri Okafor", handle: "@zurimoves", time: "2h", image: photos.hero, caption: "Took this one-take routine from the studio to the Arena. Your support means everything.", likes: 8431, comments: 364, comp: "voice" as CompId, round: "Round 2" },
-  { id: "p2", name: "Chef Bisi", handle: "@chefbisi", time: "4h", image: photos.chef, caption: "Sunday stew, my grandmother’s way. Low heat, long patience, no shortcuts.", likes: 2210, comments: 118 },
-  { id: "p3", name: "Naya Ibe", handle: "@naya.art", time: "6h", image: photos.troupe, caption: "Rehearsal with the crew before tonight. Contemporary meets Shaku.", likes: 5120, comments: 201, comp: "dance" as CompId, round: "Round 1" },
-  { id: "p4", name: "Amara Styles", handle: "@amarastyles", time: "9h", image: photos.fashion, caption: "Desert light, Lagos tailoring. Full lookbook drops Friday.", likes: 3980, comments: 96 },
+const feedPosts: { id: string; name: string; handle: string; time: string; image: string; avatar: string; caption: string; tags?: string; likes: number; comments: number; shares: number; comp?: CompId; round?: string }[] = [
+  { id: "p1", name: "Mike Offiong", handle: "@mike_off", time: "2h", image: fx.feed1, avatar: fx.avatarMike, caption: "Just my entry for the competition. This one’s for the dreamers. Let’s go....", tags: "#BestDanceMovesCompetition", likes: 2200, comments: 282, shares: 40, comp: "dance", round: "Round 1" },
+  { id: "p2", name: "Zuri Okafor", handle: "@zurimoves", time: "3h", image: photos.hero, avatar: fx.avatarSam, caption: "Took this one-take routine from the studio to the Arena. Your support means everything.", tags: "#AfrobeatArena", likes: 8431, comments: 364, shares: 51, comp: "voice", round: "Round 2" },
+  { id: "p3", name: "Samantha Kels", handle: "@samantha_kels", time: "4h", image: fx.feed2, avatar: fx.avatarDisc, caption: "Worship that comes from the heart.", tags: "#WorshipInSpirit", likes: 2200, comments: 282, shares: 40 },
+  { id: "p4", name: "Chef Bisi", handle: "@chefbisi", time: "5h", image: photos.chef, avatar: fx.avatarMike, caption: "Sunday stew, my grandmother’s way. Low heat, long patience, no shortcuts.", likes: 2210, comments: 118, shares: 22 },
+  { id: "p5", name: "Naya Ibe", handle: "@naya.art", time: "6h", image: photos.troupe, avatar: fx.avatarSam, caption: "Rehearsal with the crew before tonight. Contemporary meets Shaku.", tags: "#StreetDanceCypher", likes: 5120, comments: 201, shares: 33, comp: "dance", round: "Round 1" },
 ];
 
 function FeedPost({ p, onWatch }: { p: (typeof feedPosts)[number]; onWatch: () => void }) {
   const a = useArena();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [followed, setFollowed] = useState(false);
+  const f = a.followsCreator(p.handle);
   return (
-    <article className="post">
-      <div className="post-user">
-        <img src={p.image} alt="" />
-        <div><h3>{p.name} <b>✓</b></h3><p>{p.handle} · {p.time}</p></div>
-        <button className={followed ? "follow active" : "follow"} onClick={() => setFollowed(!followed)}>{followed ? "Following" : "Follow"}</button>
+    <article className="fx-post">
+      <div className="fx-post-head">
+        <img className="fx-avatar" src={p.avatar} width={50} height={50} alt="" />
+        <button className="who" onClick={onWatch}><b>{p.handle}<Verified /></b><small>{p.time} ago</small></button>
+        <button className={f ? "follow on" : "follow"} onClick={() => a.toggleCreator(p.handle)}>{f ? "Following" : "Follow"}</button>
       </div>
-      <button className="post-media" onClick={onWatch} aria-label={`Watch ${p.name}'s post`}>
-        <img src={p.image} alt="" />
-        {p.comp && <div className="entry-label"><span>COMPETITION ENTRY</span><strong>{a.comp(p.comp).name} · {p.round}</strong></div>}
-        <div className="play"><Icon name="play" filled size={26} /></div>
+      <p className="cap">{p.caption}{p.tags && <b>{p.tags}</b>}</p>
+      {p.comp && <span className="fx-entry-tag">COMPETITION ENTRY <small>{a.comp(p.comp).name} · {p.round}</small></span>}
+      <button className="fx-media" onClick={onWatch} aria-label={`Watch ${p.name}'s post`}>
+        <img className="bg" src={p.image} alt="" />
+        <span className="ctrl"><img src={fx.iPlayCircle} alt="" /><span className="vol"><img src={fx.iVolume} alt="" /></span></span>
+        <i className="progress" />
       </button>
-      <div className="post-body">
-        <p><strong>{p.handle}</strong> {p.caption}</p>
-        <div className="post-actions">
-          <button className={liked ? "selected" : ""} onClick={() => setLiked(!liked)}><Icon name="heart" filled={liked} /><span>{(p.likes + (liked ? 1 : 0)).toLocaleString()}</span></button>
-          <button onClick={() => a.toast("Comments opened")}><Icon name="comment" /><span>{p.comments}</span></button>
-          <button onClick={() => a.toast("Share link copied")}><Icon name="share" /><span>Share</span></button>
-          <button className={saved ? "selected push" : "push"} onClick={() => { setSaved(!saved); a.toast(saved ? "Removed from saved" : "Saved to your collection"); }}><Icon name="bookmark" filled={saved} /></button>
+      <div className="fx-actions">
+        <div>
+          <button className={liked ? "on" : ""} onClick={() => setLiked(!liked)} aria-label="Like"><FxIcon src={liked ? fx.iHeartBold : fx.iHeart} />{kfmt(p.likes + (liked ? 1 : 0))}</button>
+          <button onClick={() => a.toast("Comments opened")} aria-label="Comments"><FxIcon src={fx.iMsg} />{p.comments}</button>
+          <button onClick={() => a.toast("Share link copied")} aria-label="Share"><FxIcon src={fx.iSend} />{p.shares}</button>
         </div>
+        <button className={saved ? "on" : ""} onClick={() => { setSaved(!saved); a.toast(saved ? "Removed from saved" : "Saved to your collection"); }} aria-label="Save"><FxIcon src={fx.iBookmark} /></button>
       </div>
     </article>
   );
@@ -2420,32 +2493,40 @@ function FeedPost({ p, onWatch }: { p: (typeof feedPosts)[number]; onWatch: () =
 function Home({ openCompetitions, openNotifications }: { openCompetitions: () => void; openViewer: () => void; openNotifications: () => void; showToast: (s: string) => void }) {
   const a = useArena();
   const [feed, setFeed] = useState("For You");
-  const posts = feed === "Following" ? feedPosts.filter((p) => p.id !== "p2") : feed === "Discover" ? [...feedPosts].reverse() : feedPosts;
+  const [slide, setSlide] = useState(0);
+  const [view, setView] = useState<ViewItem | null>(null);
+  const unread = a.notes.some((n) => n.unread);
+  const rail = (["food", "dance", "bdm", "voice", "face"] as CompId[]).map(a.comp);
+  const posts = feed === "Following" ? feedPosts.filter((p) => a.followsCreator(p.handle)) : feed === "Competitions" ? feedPosts.filter((p) => p.comp) : feedPosts;
   return (
-    <>
-      <header className="topbar home-bar">
-        <div className="topbar-side"><div className="brand-mark"><span>D</span></div></div>
-        <div className="wordmark">D—ARENA</div>
-        <div className="topbar-side end home-actions"><button className="icon-button notify" onClick={openNotifications} aria-label="Notifications"><Icon name="bell" /><i /></button><button className="avatar-btn" onClick={() => a.setTab("profile")} aria-label="Your profile"><img src={photos.portrait} alt="" /></button></div>
+    <div className="fx">
+      <header className="fx-home-head">
+        <span style={{ display: "flex", alignItems: "center", gap: 4 }}><LogoMark /><LogoWord /></span>
+        <div className="right">
+          <button className="bell" onClick={openNotifications} aria-label="Notifications"><FxIcon src={fx.iBell} size={26} />{unread && <i />}</button>
+          <button className="me" onClick={() => a.setTab("profile")} aria-label="Your profile"><img src={fx.avatarMe} alt="" /></button>
+        </div>
       </header>
-      <main>
-        <div className="tabs">{["For You", "Following", "Discover"].map((tab) => <button key={tab} className={feed === tab ? "active" : ""} onClick={() => setFeed(tab)}>{tab}</button>)}</div>
-        <section className="section">
-          <div className="section-head"><div><h2>On the Arena</h2><p className="section-sub">Compete. Get noticed. Win.</p></div><button onClick={openCompetitions}>See all <Icon name="arrow" size={15} /></button></div>
-          <div className="horizontal-cards hub-row">{(["bdm", "dance", "food", "face"] as CompId[]).map((id) => <HubCard key={id} c={a.comp(id)} />)}</div>
-        </section>
-        <div className="feed">{posts.map((p) => <FeedPost key={p.id} p={p} onWatch={() => (p.comp ? a.go({ screen: "arena", comp: p.comp, entry: 0 }) : a.toast("Playing post"))} />)}</div>
-      </main>
-    </>
+      <div className="fx-chips" style={{ marginTop: 18 }}>{["For You", "Competitions", "Following"].map((t) => <button key={t} className={feed === t ? "on" : ""} onClick={() => setFeed(t)}>{t}</button>)}</div>
+      <div className="fx-sec-head"><h2>On the Arena</h2><button onClick={openCompetitions}>See all <FxIcon src={fx.iArrowRight} size={20} /></button></div>
+      <div className="fx-rail" onScroll={(ev) => setSlide(Math.min(rail.length - 1, Math.round(ev.currentTarget.scrollLeft / 256)))}>{rail.map((c) => <ArenaRailCard key={c.id} c={c} />)}</div>
+      <div className="fx-rail-dots" aria-hidden="true">{rail.map((c, i) => <i key={c.id} className={i === slide ? "on" : ""} />)}</div>
+      <div className="fx-feed">
+        {posts.length ? posts.map((p) => <FeedPost key={p.id} p={p} onWatch={() => setView(p)} />)
+          : <FxEmpty icon={fx.iUsers} title="No posts to show yet" copy="Follow creators and their posts will show up here." action="Explore Discover" onClick={() => a.setTab("discover")} />}
+      </div>
+      {view && <FxViewer v={view} onClose={() => setView(null)} />}
+    </div>
   );
 }
 
 function EmptyState({ title, copy, action, onClick }: { title: string; copy: string; action: string; onClick: () => void }) {
-  return <div className="empty-state"><div className="empty-icon"><Icon name="search" size={26} /></div><h2>{title}</h2><p>{copy}</p><button className="primary small" onClick={onClick}>{action}</button></div>;
+  return <FxEmpty title={title} copy={copy} action={action} onClick={onClick} />;
 }
 
+
 const gallery = [
-  { title: "Owambe footwork, slowed down", creator: "@zuri.moves", views: "89.2K", type: "Dance", image: photos.dance, comp: "dance" as CompId },
+  { title: "Owambe footwork, slowed down", creator: "@zuri.moves", views: "89.2K", type: "Dance", image: fx.arenaDance, comp: "dance" as CompId },
   { title: "Wrote this hook at 3am", creator: "@toluvoice", views: "24.8K", type: "Music", image: photos.singer },
   { title: "Party jollof, smoked right", creator: "@chefbisi", views: "41.0K", type: "Food", image: photos.chef, comp: "food" as CompId },
   { title: "Desert light lookbook", creator: "@amarastyles", views: "18.3K", type: "Fashion", image: photos.fashion },
@@ -2465,53 +2546,34 @@ function DiscoverPage() {
   const a = useArena();
   const [category, setCategory] = useState("Trending");
   const [query, setQuery] = useState("");
-  const [more, setMore] = useState(false);
   const [open, setOpen] = useState<(typeof gallery)[number] | null>(null);
   const q = query.trim().toLowerCase();
   const filtered = gallery.filter((g) => (category === "Trending" || g.type === category) && (!q || (g.title + g.creator + g.type).toLowerCase().includes(q)));
   const compHits = q ? comps.filter((c) => (c.name + c.category).toLowerCase().includes(q)) : [];
+  const avatars = [fx.avatarMike, fx.avatarDisc, fx.avatarSam, fx.avatarAlexSm];
   return (
-    <>
-      <TopBar title="Discover" />
-      <main className="page">
-        <p className="hub-sub">Explore amazing content, creators and communities.</p>
-        <div className="search-box"><Icon name="search" size={19} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search creators, videos, competitions" />{query && <button className="plain" onClick={() => setQuery("")} aria-label="Clear"><Icon name="x" size={15} /></button>}</div>
-        <div className="cat-wrap">
-          <div className="category-row">{discoverCats.map((item) => <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>)}</div>
-          <button className="cat-more" onClick={() => setMore(!more)} aria-label="All categories"><Icon name="down" size={16} /></button>
-          {more && <div className="cat-menu">{discoverCats.map((x) => <button key={x} className={category === x ? "active" : ""} onClick={() => { setCategory(x); setMore(false); }}>{x}{category === x && <Icon name="check" size={13} />}</button>)}</div>}
+    <div className="fx">
+      <header className="fx-pagehead"><h1>Discover</h1><p>Explore amazing content, creators and communities.</p></header>
+      <div style={{ display: "grid", gap: 24, marginTop: 24 }}>
+        <label className="fx-search"><FxIcon src={fx.iSearchNormal} size={18} /><input value={query} onChange={(ev) => setQuery(ev.target.value)} placeholder="Search for competitions, creators, etc." aria-label="Search" />{query && <button onClick={() => setQuery("")} aria-label="Clear search"><FxIcon src={fx.iClose} size={18} /></button>}</label>
+        <nav className="fx-tabs text">{discoverCats.map((item) => <button key={item} className={category === item ? "on" : ""} onClick={() => setCategory(item)}>{item}</button>)}</nav>
+      </div>
+      {compHits.length > 0 && <div className="fx-results"><small>COMPETITIONS</small>{compHits.map((c) => <button key={c.id} onClick={() => a.go({ screen: "competition", comp: c.id })}><img src={c.image} alt="" /><div><b>{c.name}</b><span>{c.category} · {phaseLabel(c.phase, c.round)}</span></div><FxIcon src={fx.iArrowRight} /></button>)}</div>}
+      {filtered.length ? (
+        <div className="fx-grid2">
+          {filtered.map((item, i) => (
+            <button className="fx-ccard" key={item.title} onClick={() => setOpen(item)}>
+              <span className="m"><img src={item.image} alt={item.title} />{item.comp && <span className="badge">ENTRY</span>}<span className="views"><FxIcon src={fx.iPlay} size={18} />{item.views}</span></span>
+              <span className="i"><p>{item.title}</p><span className="u"><img className="fx-avatar" src={avatars[i % avatars.length]} width={30} height={30} alt="" /><span>{item.creator}</span></span></span>
+            </button>
+          ))}
         </div>
-        {compHits.length > 0 && <div className="search-results"><p className="eyebrow">COMPETITIONS</p>{compHits.map((c) => <button key={c.id} className="result" onClick={() => a.go({ screen: "competition", comp: c.id })}><img src={c.image} alt="" /><div><strong>{c.name}</strong><span>{c.category} · {phaseLabel(c.phase, c.round)}</span></div><Icon name="arrow" /></button>)}</div>}
-        {filtered.length ? (
-          <div className="masonry">
-            {filtered.map((item, i) => (
-              <button className={`m-tile ${i % 3 === 0 ? "tall" : ""}`} key={item.title} onClick={() => setOpen(item)}>
-                <img src={item.image} alt={item.title} />
-                <div className="tile-gradient" />
-                {item.comp && <b className="entry-tag">COMPETITION ENTRY</b>}
-                <span className="m-views"><Icon name="eye" size={11} /> {item.views}</span>
-                <div className="tile-copy"><strong>{item.title}</strong><span>{item.creator} <b className="verified">✓</b></span></div>
-              </button>
-            ))}
-          </div>
-        ) : <EmptyState title="Nothing found" copy={q ? `No ${category === "Trending" ? "" : category.toLowerCase() + " "}posts match “${query}”.` : `No ${category.toLowerCase()} posts yet — check back soon.`} action="Show trending" onClick={() => { setCategory("Trending"); setQuery(""); }} />}
-      </main>
-      {open && (
-        <div className="viewer post-viewer">
-          <img className="viewer-img" src={open.image} alt={open.title} />
-          <div className="viewer-shade" />
-          <button className="floating-back" onClick={() => setOpen(null)} aria-label="Close"><Icon name="x" /></button>
-          <div className="viewer-actions"><button><Icon name="heart" /><span>Like</span></button><button onClick={() => a.toast("Comments opened")}><Icon name="comment" /><span>212</span></button><button onClick={() => a.toast("Share link copied")}><Icon name="share" /><span>Share</span></button><button onClick={() => a.toast("Saved to your profile")}><Icon name="bookmark" /><span>Save</span></button></div>
-          <div className="viewer-copy">
-            <div className="creator-line"><img src={open.image} alt="" /><strong>{open.creator} <b>✓</b></strong><span className="round-tag">{open.type}</span></div>
-            <p>{open.title} · {open.views} views</p>
-            {open.comp && <div className="vote-panel"><div><span>Competition entry</span><small>{a.comp(open.comp).name}</small></div><button className="soft" onClick={() => { setOpen(null); a.go({ screen: "arena", comp: open.comp!, entry: 0 }); }}>Open entry</button></div>}
-          </div>
-        </div>
-      )}
-    </>
+      ) : <FxEmpty title="Nothing here yet" copy={q ? `No ${category === "Trending" ? "" : category.toLowerCase() + " "}posts match “${query}”.` : `No ${category.toLowerCase()} posts yet. Explore another category.`} action="Show trending" onClick={() => { setCategory("Trending"); setQuery(""); }} />}
+      {open && <FxViewer v={{ image: open.image, handle: open.creator, avatar: avatars[gallery.indexOf(open) % avatars.length], time: "2h", caption: open.title, tags: `#${open.type.replace(/\s/g, "")} #D-Arena`, likes: Math.round(parseFloat(open.views) * 90), comments: 282, shares: 40, comp: open.comp }} onClose={() => setOpen(null)} />}
+    </div>
   );
 }
+
 
 function WalletPage({ resume, coins, setCoins, showToast, openEarnings }: { resume?: boolean; coins: number; setCoins: (n: number) => void; showToast: (s: string) => void; openEarnings: () => void }) {
   const a = useArena();
@@ -2546,54 +2608,134 @@ function Earnings({ onBack, showToast }: { onBack: () => void; showToast: (s: st
 
 function ProfilePage({ showToast }: { showToast: (s: string) => void }) {
   const a = useArena();
-  const [profileTab, setProfileTab] = useState("Posts");
-  const studio: [string, string, string, () => void][] = [
-    ["trophy", "My Competitions", a.journey.registered ? "1 active" : "None active", () => setProfileTab("Competitions")],
-    ["film", "My Entries", a.journey.submitted ? entryStatus(a.journey, a.journey.phase).label : "No entries yet", () => (a.journey.submitted ? a.backTo({ screen: "competition", tab: "My Journey", comp: "bdm" }) : a.setTab("competitions"))],
-    ["wallet", "Earnings", "₦18,500 available", () => a.go({ screen: "earnings" })],
+  const [tab, setTab] = useState("Activity");
+  const [studio, setStudio] = useState(false);
+  const [sub, setSub] = useState<string | null>(null);
+  const [view, setView] = useState<ViewItem | null>(null);
+  const studioItems: [string, string, string, () => void][] = [
+    ["trophy", "My Competitions", a.journey.registered ? "1 active" : "None active", () => setSub("Competitions")],
+    ["film", "My Entries", a.journey.submitted ? entryStatus(a.journey, a.journey.phase).label : "No entries yet", () => { setStudio(false); a.journey.submitted ? a.backTo({ screen: "competition", tab: "My Journey", comp: "bdm" }) : a.setTab("competitions"); }],
+    ["heart", "Supporting", "Creators you’ve voted for", () => setSub("Supporting")],
+    ["bookmark", "Saved", `${a.saved.length} saved`, () => setSub("Saved")],
+    ["wallet", "Earnings", "₦18,500 available", () => { setStudio(false); a.go({ screen: "earnings" }); }],
     ["check", "Verification", "Verified creator", () => showToast("You’re verified · ID confirmed Sep 12")],
     ["fire", "Live", "Unlocks at 1,000 followers", () => showToast("Go Live unlocks at 1,000 followers")],
     ["settings", "Settings", "Account, privacy, payouts", () => showToast("Settings opened")],
   ];
+  const joined = a.comp(a.journey.registered ? "bdm" : "food");
+  const latest: ViewItem = { image: fx.feed1, handle: "@adanwosu", avatar: fx.avatarAlexSm, time: "10s", caption: "Just my entry for the competition. This one’s for the dreamers. Let’s go....", likes: 200, comments: 4, shares: 10 };
+  const liked: ViewItem = { image: fx.arenaDance, handle: "@calistrinx", avatar: fx.avatarMike, time: "2h", caption: "This is a tribute to all the passionate dancers out there. Let’s break it down!", likes: 100, comments: 10, shares: 14 };
+  const act = (kind: React.ReactNode, name: string, v: ViewItem) => (
+    <div className="fx-act">
+      <span className="kind">{kind}</span>
+      <div className="uh"><img src={v.avatar} alt="" /><div><b>{name}<span>{v.handle}</span></b><small>{v.time} ago</small></div></div>
+      <p>{v.caption}</p>
+      <button className="fx-media" onClick={() => setView(v)} aria-label="Play post"><img className="bg" src={v.image} alt="" /><span className="ctrl"><img src={fx.iPlayCircle} alt="" /><span className="vol"><img src={fx.iVolume} alt="" /></span></span></button>
+      <div className="fx-actions"><div><button aria-label="Likes"><FxIcon src={fx.iHeart} />{v.likes}</button><button aria-label="Comments"><FxIcon src={fx.iMsg} />{v.comments}</button><button aria-label="Shares"><FxIcon src={fx.iSend} />{v.shares}</button></div><button aria-label="Save"><FxIcon src={fx.iBookmark} /></button></div>
+    </div>
+  );
   return (
-    <>
-      <TopBar title="Profile" />
-      <main className="page profile-page">
-        <div className="profile-header"><div className="avatar-wrap"><img src={photos.portrait} alt="Ada Nwosu" /><i>✓</i></div><h1>Ada Nwosu</h1><p>@adanwosu · Creator</p><span>Movement artist. Finding rhythm in every story. Lagos, NG.</span><div className="profile-stats"><button><b>128</b><small>Posts</small></button><button><b>24.8K</b><small>Followers</small></button><button><b>842</b><small>Following</small></button></div><div className="profile-actions"><button onClick={() => showToast("Profile editor opened")}>Edit profile</button><button aria-label="Share profile" onClick={() => showToast("Profile link copied")}><Icon name="share" size={18} /></button><button aria-label="Settings" onClick={() => showToast("Settings opened")}><Icon name="settings" size={18} /></button></div></div>
-        <p className="eyebrow studio-label">CREATOR STUDIO</p>
-        <div className="studio-grid">{studio.map(([ic, t, sub, fn]) => <button key={t} onClick={fn}><Icon name={ic} size={18} /><strong>{t}</strong><small>{sub}</small></button>)}</div>
-        <div className="tabs profile-tabs">{["Posts", "Competitions", "Supporting", "Saved"].map((t) => <button className={profileTab === t ? "active" : ""} key={t} onClick={() => setProfileTab(t)}>{t}</button>)}</div>
-        {profileTab === "Competitions" ? <ProfileArenas /> : profileTab === "Supporting" ? <Supporting /> : profileTab === "Saved" ? (a.saved.length ? <div className="hub-grid">{a.saved.map((id) => <HubCard key={id} c={a.comp(id)} />)}</div> : <EmptyState title="Nothing saved yet" copy="Bookmark competitions and posts and they’ll wait for you here." action="Explore competitions" onClick={() => a.setTab("competitions")} />) : <div className="profile-grid">{gallery.slice(0, 9).map((g) => <img key={g.title} src={g.image} alt="" />)}</div>}
-      </main>
-    </>
+    <div className="fx fx-prof">
+      <div className="bar"><span className="spacer" /><button className="fx-circle" onClick={() => setStudio(true)} aria-label="More options"><FxIcon src={fx.iMore} /></button></div>
+      <div className="fx-pover"><img src={fx.avatarAlex} alt="Ada Nwosu" /><div className="fx-stats"><button onClick={() => a.go({ screen: "fans", tab: "Fans" })}><b>24.8k</b><small>fans</small></button><i /><button onClick={() => setTab("Posts")}><b>128</b><small>posts</small></button></div></div>
+      <div className="fx-pid"><strong>Ada Nwosu <Verified /></strong><span>@adanwosu</span><p>Movement artist. Finding rhythm in every story. Lagos, NG.</p></div>
+      <div className="fx-pact"><button className="fx-btn md" onClick={() => showToast("Profile link copied")}>Share</button><button className="fx-btn md grey" onClick={() => showToast("Profile editor opened")}>Edit</button></div>
+      <button className="fx-stat-card" onClick={() => setStudio(true)}><div><span className="ic"><FxIcon src={fx.iGrid} /></span><span><b>Creator Stats</b><small>View Stats</small></span></div><FxIcon src={fx.iArrowRight} /></button>
+      <nav className="fx-tabs even fx-prof-tabs">{["Activity", "Posts"].map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t}</button>)}</nav>
+      {tab === "Activity" ? (
+        <div className="fx-activity">
+          {act(<><FxIcon src={fx.iMagic} size={18} />Latest post</>, "Ada Nwosu", latest)}
+          <div className="fx-act">
+            <span className="kind"><FxIcon src={fx.iShareArrow} size={18} />Ada Nwosu joined competition</span>
+            <div className="uh"><img src={fx.avatarAlexSm} alt="" /><div><b>Ada Nwosu<span>@adanwosu</span></b><small>2h ago</small></div></div>
+            <button className="fx-act-comp" onClick={() => a.go({ screen: "competition", comp: joined.id })}><img src={joined.image} alt="" /><span className="cap"><strong>{joined.name}</strong><span><FxIcon src={fx.iUsers} size={16} />{kfmt(joined.contestants)} joined</span></span></button>
+          </div>
+          {act(<><FxIcon src={fx.iHeartBold} size={18} />Ada Nwosu liked</>, "Calistrinx", liked)}
+        </div>
+      ) : (
+        <div className="fx-grid2" style={{ margin: "0 -16px" }}>{gallery.slice(0, 6).map((g, i) => (
+          <button className="fx-ccard" key={g.title} onClick={() => setView({ image: g.image, handle: "@adanwosu", avatar: fx.avatarAlexSm, time: `${i + 1}d`, caption: g.title, likes: 120 + i * 37, comments: 8 + i, shares: 3 + i })}>
+            <span className="m"><img src={g.image} alt={g.title} /><span className="views"><FxIcon src={fx.iPlay} size={18} />{g.views}</span></span>
+            <span className="i"><p>{g.title}</p><span className="u"><img className="fx-avatar" src={fx.avatarAlexSm} width={30} height={30} alt="" /><span>@adanwosu</span></span></span>
+          </button>
+        ))}</div>
+      )}
+      {view && <FxViewer v={view} onClose={() => setView(null)} />}
+      {studio && (
+        <div className="sheet-backdrop" onClick={() => { setStudio(false); setSub(null); }}>
+          <div className="sheet fx" onClick={(ev) => ev.stopPropagation()} style={{ maxHeight: "86vh", overflowY: "auto" }}>
+            <div className="sheet-handle" />
+            <div className="sheet-title"><div><span>{sub ? "CREATOR STUDIO" : "MENU"}</span><h2>{sub ?? "Creator Studio"}</h2></div><button onClick={() => (sub ? setSub(null) : setStudio(false))}>{sub ? "‹" : "×"}</button></div>
+            {sub === "Competitions" ? <ProfileArenas /> : sub === "Supporting" ? <Supporting /> : sub === "Saved" ? (a.saved.length ? <div style={{ display: "grid", gap: 16 }}>{a.saved.map((id) => <CompCard key={id} c={a.comp(id)} />)}</div> : <FxEmpty title="No saved posts" copy="Bookmark competitions and posts and they’ll wait for you here." action="Explore competitions" onClick={() => { setStudio(false); a.setTab("competitions"); }} />)
+              : <div className="fx-sheet-studio">{studioItems.map(([ic, t, s, fn]) => <button key={t} onClick={fn}><span className="ic"><Icon name={ic} size={19} /></span><span><b>{t}</b><small>{s}</small></span></button>)}</div>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
+const fanList: [string, string, string][] = [
+  ["Alex Yemi", "@alexyemi", fx.fan1], ["Maria Gonzalez", "@mariagonzalez", fx.fan2], ["Liam Chen", "@liamchen", fx.fan3], ["Sofia Patel", "@sofiapatel", fx.fan4],
+  ["Ethan Brooks", "@ethanbrooks", fx.fan5], ["Nia Johnson", "@niajohnson", fx.fan6], ["Elijah Martinez", "@elijahm", fx.fan7], ["Sophia Lee", "@sophialee", fx.fan8],
+];
+
+function FansScreen({ route }: { route: Route }) {
+  const a = useArena();
+  const [tab, setTab] = useState(route.tab === "Following" ? "Following" : "Fans");
+  const [mine, setMine] = useState<string[]>(fanList.slice(2, 6).map((f) => f[1]));
+  const list = tab === "Fans" ? fanList : fanList.filter((f) => mine.includes(f[1]));
+  const toggle = (h: string) => { const on = mine.includes(h); setMine(on ? mine.filter((x) => x !== h) : [...mine, h]); a.toast(on ? `Unfollowed ${h}` : `Following ${h}`); };
+  return (
+    <div className="fx">
+      <header className="fx-navhead"><Back onClick={a.back} /><h1>Ada Nwosu</h1><span /></header>
+      <nav className="fx-tabs even">{["Fans", "Following"].map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t}</button>)}</nav>
+      {list.length ? (
+        <div className="fx-follow-list">{list.map(([n, h, img]) => {
+          const on = mine.includes(h);
+          return <div key={h} className="fx-frow"><div><img className="av" src={img} alt="" /><span><b>{n}<img src={fx.verifyBold} alt="Verified" /></b><small>{h}</small></span></div><button className={`fx-btn md ${on ? "grey" : "solid"}`} onClick={() => toggle(h)}>{on ? "Following" : "Follow"}</button></div>;
+        })}</div>
+      ) : <FxEmpty icon={fx.iUsers} title="Not following anyone yet" copy="Follow creators you love and they’ll show up here." action="Discover creators" onClick={() => a.setTab("discover")} />}
+    </div>
+  );
+}
+
+
 function Notifications() {
   const a = useArena();
-  useEffect(() => () => a.readNotes(), []);
-  const groups: [string, Note[]][] = [["New", a.notes.filter((n) => n.unread)], ["Earlier", a.notes.filter((n) => !n.unread)]];
+  const [loading, setLoading] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const [cleared, setCleared] = useState(false);
+  useEffect(() => {
+    const t = window.setTimeout(() => setLoading(false), 800);
+    const on = () => setScrolled(window.scrollY > 90);
+    window.addEventListener("scroll", on);
+    return () => { window.clearTimeout(t); window.removeEventListener("scroll", on); a.readNotes(); };
+  }, []);
+  const notes = cleared ? [] : a.notes;
+  const groups: [string, Note[]][] = [["New", notes.filter((n) => n.unread)], ["Earlier", notes.filter((n) => !n.unread)]];
   return (
-    <>
-      <SubBar title="Notifications" onBack={a.back} />
-      <main className="page notifications">
-        {a.notes.length === 0 && <EmptyState title="You’re all caught up" copy="Competition updates, votes and payouts will show up here." action="Back home" onClick={() => a.setTab("home")} />}
-        {groups.filter(([, l]) => l.length).map(([g, l]) => (
+    <div className={`fx fx-notif ${scrolled ? "scrolled" : ""}`}>
+      <div className="fx-sticky" aria-hidden={!scrolled}><Back onClick={a.back} /><h2>Notifications</h2><span /></div>
+      <Back onClick={a.back} />
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}><h1 className="fx-title-lg">Notifications</h1>{!loading && notes.length > 0 && <button className="fx-link" style={{ marginBottom: 6 }} onClick={() => setCleared(true)}>Clear all</button>}</div>
+      {loading ? <div className="fx-inline-loader"><FxLoader /></div>
+        : notes.length === 0 ? <div style={{ paddingTop: 120 }}><FxEmpty bell title="No notifications yet" copy="No notifications now. Stay tuned for updates after contestants showcase their talents." /></div>
+        : groups.filter(([, l]) => l.length).map(([g, l]) => (
           <section key={g}>
-            <p className="eyebrow">{g.toUpperCase()}</p>
+            <h3>{g}</h3>
             {l.map((n) => (
-              <button key={n.id} className={n.kind === "private" ? "note-private" : ""} onClick={() => a.go(n.route)}>
-                <span className={`note-icon ${n.tone}`}><Icon name={n.icon} /></span>
-                <p><strong>{n.title}</strong><span>{n.body}</span><small>{n.kind === "private" && <><Icon name="lock" size={9} /> Private · </>}{n.time}</small></p>
-                {n.unread && <i />}
+              <button key={n.id} className="fx-nrow" onClick={() => a.go(n.route)}>
+                <span className="l"><span className="fx-pair"><img src={fx.notifA} alt="" /><img src={fx.notifB} alt="" /></span><span className="t"><b>{n.title}</b>{n.body}{n.kind === "private" && <small><Icon name="lock" size={10} /> Private invitation</small>}</span></span>
+                <time>{n.time}</time>
               </button>
             ))}
           </section>
         ))}
-      </main>
-    </>
+    </div>
   );
 }
+
 
 function CreateSheet({ close }: { close: () => void }) {
   const a = useArena();
@@ -2624,16 +2766,45 @@ function CreateSheet({ close }: { close: () => void }) {
 }
 
 function BottomNav({ active, setTab, openCreate }: { active: Tab; setTab: (t: Tab) => void; openCreate: () => void }) {
-  const items: [Tab, string, string][] = [["home", "Home", "home"], ["discover", "Discover", "search"], ["competitions", "Competitions", "trophy"], ["wallet", "Wallet", "wallet"], ["profile", "Profile", "user"]];
-  return <nav className="bottom-nav">{items.map(([tab, label, icon], index) => <div key={tab} className={index === 2 ? "nav-slot competition-slot" : "nav-slot"}>{index === 2 && <button className="fab" onClick={openCreate} aria-label="Create"><Icon name="plus" size={27} /></button>}<button className={active === tab ? "nav-button active" : "nav-button"} onClick={() => setTab(tab)}><Icon name={icon} filled={active === tab && tab !== "discover"} size={21} /><span>{label}</span></button></div>)}</nav>;
+  const items: [Tab, string, string][] = [["home", "Home", fx.iHome], ["discover", "Discover", fx.iSearch], ["competitions", "Arena", fx.iCup], ["wallet", "Wallet", fx.iWallet], ["profile", "Menu", fx.iMenu]];
+  return (
+    <>
+      {["home", "discover", "competitions"].includes(active) && <button className="fx-fab" onClick={openCreate} aria-label="Create"><FxIcon src={fx.iAdd} size={38} /></button>}
+      <nav className="fx-nav fx" aria-label="Main">{items.map(([tab, label, ic]) => <button key={tab} className={active === tab ? "on" : ""} onClick={() => setTab(tab)} aria-current={active === tab ? "page" : undefined}><span className="pad"><FxIcon src={ic} /></span>{label}</button>)}</nav>
+    </>
+  );
 }
+
 
 /* ───────────────────────── Account & authentication ───────────────────────── */
 
-type AuthStep = "welcome" | "email" | "sent" | "verify" | "username" | "password" | "confirm" | "done" | "signin";
+type AuthStep = "onboard" | "email" | "sent" | "verify" | "password" | "username" | "done" | "signin";
+const obSlides = [
+  { t1: "Your talent", t2: "Deserves", word: "Stage", wide: false, dark: true },
+  { t1: "Discover", t2: "Amazing", word: "Talent", wide: false, dark: true },
+  { t1: "Compete &", t2: "Win", word: "Rewards", wide: true, dark: false },
+];
+
+function OnboardArt() {
+  const card = (src: string, w: number, h: number, deg: number, border: number, radius: number): React.CSSProperties => ({ width: w, height: h, transform: `rotate(${deg}deg)`, border: `${border}px solid #f7f7f7`, borderRadius: radius, overflow: "hidden", backgroundImage: `url(${src})`, backgroundSize: "cover", backgroundPosition: "center" });
+  return (
+    <div className="fx-ob-art" aria-hidden="true">
+      <img src={fx.ob1Swirl} alt="" style={{ left: -62.8, top: 78.6, width: 525.6, height: 525.6 }} />
+      <img src={fx.ob1Bg} alt="" style={{ left: -186, top: -398, width: 736, height: 1308, objectFit: "cover" }} />
+      <img src={fx.ob1Overlay} alt="" style={{ left: -186, top: -398, width: 736, height: 1308, objectFit: "cover" }} />
+      <div style={{ left: 42, top: 123, ...card(fx.ob1Img3, 120, 133.3, -11.68, 2, 8) }} />
+      <div style={{ left: 263, top: 219, ...card(fx.ob1Img2, 120, 133.3, 7.75, 2, 8) }} />
+      <img src={fx.ob1Ring} alt="" style={{ left: -7, top: 408, width: 422, height: 126 }} />
+      <img src={fx.ob1Character} alt="" style={{ left: 17, top: 131, width: 368, height: 373, objectFit: "cover", transform: "scaleX(-1)" }} />
+      <div style={{ left: 20, top: 371, ...card(fx.ob1Img1, 100, 111.1, -12, 1.667, 6.667) }} />
+      <div style={{ left: -126, top: 471, width: 648, height: 403, filter: "blur(42.65px)", backgroundImage: "linear-gradient(182.93deg, rgb(242,177,66) 2.78%, rgb(13,13,13) 34%)" }} />
+    </div>
+  );
+}
 
 function Auth({ onDone }: { onDone: (username: string) => void }) {
-  const [step, setStep] = useState<AuthStep>("welcome");
+  const [step, setStep] = useState<AuthStep>("onboard");
+  const [slide, setSlide] = useState(0);
   const [email, setEmail] = useState("");
   const [emailErr, setEmailErr] = useState("");
   const [busy, setBusy] = useState(false);
@@ -2643,13 +2814,13 @@ function Auth({ onDone }: { onDone: (username: string) => void }) {
   const [locked, setLocked] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const [username, setUsername] = useState("");
-  const [nameState, setNameState] = useState<"empty" | "checking" | "available" | "taken" | "invalid" | "length">("empty");
+  const [nameState, setNameState] = useState("empty");
   const [pw, setPw] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [pw2, setPw2] = useState("");
-  const [pwErr, setPwErr] = useState("");
+  const [pwTouched, setPwTouched] = useState(false);
   const otpRef = useRef<HTMLInputElement>(null);
-  const masked = email ? `${email.slice(0, 2)}•••@${email.split("@")[1] ?? ""}` : "";
+  const touchX = useRef<number | null>(null);
+  const masked = email ? `${email.slice(0, 2)}*@${email.split("@")[1] ?? ""}` : "";
 
   useEffect(() => { if (cooldown <= 0) return; const t = window.setTimeout(() => setCooldown(cooldown - 1), 1000); return () => window.clearTimeout(t); }, [cooldown]);
   useEffect(() => {
@@ -2661,145 +2832,183 @@ function Auth({ onDone }: { onDone: (username: string) => void }) {
     const t = window.setTimeout(() => setNameState(["zurimoves", "admin", "darena", "ada"].includes(u.toLowerCase()) ? "taken" : "available"), 700);
     return () => window.clearTimeout(t);
   }, [username]);
-  useEffect(() => { if (step === "done") { const t = window.setTimeout(() => onDone(username), 1700); return () => window.clearTimeout(t); } }, [step]);
+  useEffect(() => { if (step === "done") { const t = window.setTimeout(() => onDone(username || "guest"), 1700); return () => window.clearTimeout(t); } }, [step]);
 
+  const after = (ms: number, fn: () => void) => { setBusy(true); window.setTimeout(() => { setBusy(false); fn(); }, ms); };
   const submitEmail = () => {
     const v = email.trim();
     if (!v) return setEmailErr("Enter your email address.");
     if (!/^\S+@\S+\.\S+$/.test(v)) return setEmailErr("Enter a valid email address.");
-    setEmailErr(""); setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
+    setEmailErr("");
+    after(900, () => {
       if (v.startsWith("taken@")) return setEmailErr("exists");
       if (v.startsWith("offline@")) return setEmailErr("Check your connection and try again.");
-      setCooldown(30); setStep("sent");
-    }, 900);
+      setCooldown(20); setStep("sent");
+    });
   };
   const verify = (value: string) => {
     setCodeState("checking");
     window.setTimeout(() => {
-      if (value === "000000") return setCodeState("expired");
-      if (value !== "123456") {
-        const n = attempts + 1; setAttempts(n); setCode("");
-        if (n >= 3) { setLocked(true); setCodeState("idle"); } else setCodeState("wrong");
+      if (value === "00000") return setCodeState("expired");
+      if (value !== "12345") {
+        const n = attempts + 1; setAttempts(n);
+        if (n >= 3) { setLocked(true); setCode(""); setCodeState("idle"); } else setCodeState("wrong");
         return;
       }
       setCodeState("ok");
-      window.setTimeout(() => setStep("username"), 800);
+      window.setTimeout(() => setStep("password"), 500);
     }, 900);
   };
+  const bad = codeState === "wrong" || codeState === "expired";
   const onCode = (v: string) => {
-    const d = v.replace(/\D/g, "").slice(0, 6);
+    let d = v.replace(/\D/g, "");
+    if (bad) d = d.length > code.length ? d.slice(-1) : "";
+    d = d.slice(0, 5);
     setCode(d);
-    if (codeState === "wrong" || codeState === "expired") setCodeState("idle");
-    if (d.length === 6) verify(d);
+    if (bad || codeState === "resent") setCodeState("idle");
+    if (d.length === 5) verify(d);
   };
-  const resend = () => { if (cooldown > 0) return; setCooldown(30); setCode(""); setCodeState("resent"); otpRef.current?.focus(); };
-  const rules = [["8 characters", pw.length >= 8], ["1 letter and 1 number", /[a-z]/i.test(pw) && /\d/.test(pw)], ["1 special character", /[^a-z0-9]/i.test(pw)]] as [string, boolean][];
+  const resend = () => { if (cooldown > 0) return; setCooldown(20); setCode(""); setCodeState("resent"); otpRef.current?.focus(); };
+  const rules = [["8 characters (20 max)", pw.length >= 8 && pw.length <= 20], ["1 Letter and 1 number", /[a-z]/i.test(pw) && /\d/.test(pw)], ["1 special character (Eg, “£$%&!)", /[^a-z0-9]/i.test(pw)]] as [string, boolean][];
   const passed = rules.filter((r) => r[1]).length;
-  const backMap: Partial<Record<AuthStep, AuthStep>> = { email: "welcome", sent: "email", verify: "sent", username: "verify", password: "username", confirm: "password", signin: "welcome" };
-  const stepNo = { email: 1, sent: 2, verify: 2, username: 3, password: 4, confirm: 4 } as Partial<Record<AuthStep, number>>;
-
-  if (step === "welcome") return (
-    <div className="auth-welcome">
-      <img src={photos.hero} alt="" />
-      <div className="auth-welcome-shade" />
-      <div className="auth-welcome-copy">
-        <div className="brand-mark"><span>D</span></div>
-        <p className="eyebrow">SEASON 03 IS LIVE</p>
-        <h1>Your talent.<br />Their votes.<br /><em>Your stage.</em></h1>
-        <span>Perform in competitions, vote for the creators you love, and rise through the rounds.</span>
-        <button className="primary" onClick={() => setStep("email")}>Create account <Icon name="arrow" /></button>
-        <button className="ghost-btn" onClick={() => setStep("signin")}>I already have an account</button>
-      </div>
+  const pwBad = pwTouched && pw.length > 0 && passed < 3;
+  const backMap: Partial<Record<AuthStep, AuthStep>> = { email: "onboard", sent: "email", verify: "sent", password: "verify", username: "password", signin: "onboard" };
+  const back = () => { if (step === "email" || step === "signin") setSlide(2); setStep(backMap[step]!); };
+  const top = (close?: boolean, skip = true) => (
+    <div className="fx-auth-top">
+      <button className="fx-circle ring" onClick={back} aria-label={close ? "Close" : "Go back"}><FxIcon src={close ? fx.iClose : fx.iArrowLeft} /></button>
+      {skip && <button className="fx-skip" onClick={() => onDone(username || "guest")}>Skip</button>}
+    </div>
+  );
+  const pwField = (
+    <div>
+      <label className={`fx-input ${pwBad ? "error" : ""}`}>
+        <input type={showPw ? "text" : "password"} value={pw} onChange={(ev) => setPw(ev.target.value)} onBlur={() => setPwTouched(true)} placeholder="Password" aria-label="Password" maxLength={20} />
+        <button type="button" onClick={() => setShowPw(!showPw)} aria-label={showPw ? "Hide password" : "Show password"}><FxIcon src={fx.iEye} size={20} /></button>
+      </label>
+      <p className={`fx-help ${pwBad ? "error" : ""}`}>Your password must at least:</p>
+      <ul className={`fx-rules ${pwBad ? "error" : ""}`}>{rules.map(([r, ok]) => <li key={r} className={ok ? "ok" : ""}><FxIcon src={fx.iTick} size={16} />{r}</li>)}</ul>
     </div>
   );
 
-  if (step === "done") return (
-    <main className="auth-done"><div className="celebrate-glow" /><div className="success-ring big"><Icon name="check" size={42} /></div><h1>You’re all set.</h1><span>Welcome to the Arena, @{username}.</span><div className="splash-bar"><i /></div></main>
-  );
+  if (step === "onboard") {
+    const s = obSlides[slide];
+    const next = () => (slide < 2 ? setSlide(slide + 1) : setStep("email"));
+    return (
+      <div className="fx fx-ob fx-noise" style={noiseVar}
+        onTouchStart={(ev) => { touchX.current = ev.touches[0].clientX; }}
+        onTouchEnd={(ev) => { if (touchX.current === null) return; const dx = ev.changedTouches[0].clientX - touchX.current; touchX.current = null; if (dx < -40 && slide < 2) setSlide(slide + 1); if (dx > 40 && slide > 0) setSlide(slide - 1); }}>
+        {slide === 0 && <OnboardArt />}
+        <div className="fx-ob-copy">
+          <div className="fx-dots">{obSlides.map((_, i) => <button key={i} className={i === slide ? "on" : ""} onClick={() => setSlide(i)} aria-label={`Slide ${i + 1} of 3`} />)}</div>
+          <div className="fx-ob-title" key={slide}>
+            <span className="t1">{s.t1}</span>
+            <span className="t2">{s.t2}</span>
+            <div className="fx-ob-word" style={{ width: s.wide ? 228 : 208 }}>
+              <img src={s.wide ? fx.brush3 : fx.brush1} alt="" style={s.wide ? { left: 7.8, top: 7, width: 223, height: 66 } : { left: -1.7, top: 8, width: 221, height: 63.7 }} />
+              <span style={{ color: s.dark ? "#1d1d1d" : "#f7f7f7" }}>{s.word}</span>
+            </div>
+          </div>
+          <button className="fx-btn" onClick={next}>{slide < 2 ? "Continue" : "Get Started"}</button>
+          {slide === 2 && <button className="fx-ob-alt" onClick={() => setStep("signin")}>I already have an account</button>}
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "done") return <div className="fx fx-auth fx-noise" style={noiseVar}><div style={{ margin: "auto" }}><FxLoader label="You’re all set." /></div></div>;
 
   return (
-    <div className="auth">
-      <header className="auth-bar">
-        <button className="icon-button" onClick={() => setStep(backMap[step]!)} aria-label="Go back"><Icon name="back" /></button>
-        {stepNo[step] && <div className="auth-progress">{[1, 2, 3, 4].map((n) => <i key={n} className={n <= stepNo[step]! ? "on" : ""} />)}</div>}
-        <span />
-      </header>
-      <main className="auth-body">
-        {step === "signin" && <>
-          <h1>Welcome back.</h1><p className="subcopy">Sign in to pick up where you left off.</p>
-          <label className="field"><span>Email address</span><input type="email" value={email} onChange={(ev) => setEmail(ev.target.value)} placeholder="you@example.com" /></label>
-          <label className="field"><span>Password</span><input type="password" value={pw} onChange={(ev) => setPw(ev.target.value)} placeholder="••••••••" /></label>
-          <button className="primary" disabled={!email || !pw || busy} onClick={() => { setBusy(true); window.setTimeout(() => onDone(email.split("@")[0]), 900); }}>{busy ? <><span className="btn-spinner" /> Signing in…</> : "Sign in"}</button>
-        </>}
+    <div className="fx fx-auth fx-noise" style={noiseVar}>
+      {step === "signin" && <>
+        {top(false, false)}
+        <h1 className="xl">Welcome back.</h1>
+        <p className="fx-lede">Sign in to pick up where you left off.</p>
+        <div className="form">
+          <label className="fx-input"><input type="email" value={email} onChange={(ev) => setEmail(ev.target.value)} placeholder="Email address" aria-label="Email address" /></label>
+          {pwField}
+        </div>
+        <div className="grow" />
+        <button className="fx-btn" disabled={!/^\S+@\S+\.\S+$/.test(email) || passed < 3 || busy} onClick={() => after(900, () => onDone(email.split("@")[0]))}>Sign in</button>
+      </>}
 
-        {step === "email" && <>
-          <h1>What’s your email address?</h1>
-          <p className="subcopy">We’ll use this to create and secure your account.</p>
-          <label className={`field ${emailErr ? "error" : ""}`}><span>Email address</span><input autoFocus type="email" value={email} onChange={(ev) => { setEmail(ev.target.value); setEmailErr(""); }} onKeyDown={(ev) => ev.key === "Enter" && submitEmail()} placeholder="you@example.com" /></label>
-          {emailErr === "exists" ? <p className="field-msg error">An account already exists with this email. <button onClick={() => setStep("signin")}>Sign in</button></p> : emailErr && <p className="field-msg error">{emailErr}</p>}
-          <p className="demo-hint">Demo: try taken@… or offline@… to see errors.</p>
-          <button className="primary" disabled={busy} onClick={submitEmail}>{busy ? <><span className="btn-spinner" /> Sending code…</> : "Continue"}</button>
-        </>}
+      {step === "email" && <>
+        {top()}
+        <h1>What’s your email address?</h1>
+        <div className="form">
+          <div>
+            <label className={`fx-input ${emailErr ? "error" : ""}`}><input autoFocus type="email" value={email} onChange={(ev) => { setEmail(ev.target.value); setEmailErr(""); }} onKeyDown={(ev) => ev.key === "Enter" && submitEmail()} placeholder="Email address" aria-label="Email address" /></label>
+            {emailErr === "exists" ? <p className="fx-help error">An account already exists with this email. <button className="fx-link" onClick={() => setStep("signin")}>Sign in</button></p> : emailErr && <p className="fx-help error">{emailErr}</p>}
+            <p className="demo">Demo: try taken@… or offline@… to see errors.</p>
+          </div>
+        </div>
+        <div className="grow" />
+        <button className="fx-btn" disabled={!email.trim() || busy} onClick={submitEmail}>Continue</button>
+      </>}
 
-        {step === "sent" && <div className="auth-center">
-          <div className="mail-icon"><Icon name="bell" size={28} /></div>
-          <h1>Check your email</h1>
-          <p className="subcopy">We’ve sent a verification code to <strong>{masked}</strong>.</p>
-          <button className="primary" onClick={() => { setStep("verify"); window.setTimeout(() => otpRef.current?.focus(), 60); }}>Enter code</button>
-          <p className="field-msg">Didn’t receive it? Check spam or <button disabled={cooldown > 0} onClick={() => setCooldown(30)}>{cooldown > 0 ? `resend in ${cooldown}s` : "resend"}</button></p>
-        </div>}
+      {step === "sent" && <div className="fx-inbox" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+        {top(true)}
+        <div className="fx-inbox-art"><img src={fx.inbox1} alt="" /><img src={fx.inbox2} alt="" /></div>
+        <h1>Check your inbox</h1>
+        <p className="body">Haven’t received an email? Try searching your spam folder. If you don’t receive the message in the next hour, you can <button onClick={() => { setCooldown(20); setCodeState("resent"); }}>request another verification email.</button></p>
+        <button className="fx-btn" onClick={() => { setStep("verify"); window.setTimeout(() => otpRef.current?.focus(), 60); }}>Continue</button>
+        <p className="after">Wrong email? <button onClick={() => setStep("email")}>Change it here</button></p>
+      </div>}
 
-        {step === "verify" && <>
-          <h1>Enter the code we sent you</h1>
-          <p className="subcopy">We sent a 6-digit code to <strong>{masked}</strong>.</p>
-          <label className={`otp ${codeState === "wrong" || codeState === "expired" ? "error" : codeState === "ok" ? "ok" : ""}`} onClick={() => otpRef.current?.focus()}>
-            <input ref={otpRef} inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(ev) => onCode(ev.target.value)} disabled={codeState === "checking" || codeState === "ok" || locked} aria-label="Verification code" />
-            {Array.from({ length: 6 }).map((_, k) => <span key={k} className={k === code.length && codeState !== "checking" ? "cursor" : ""}>{code[k] ?? ""}</span>)}
-          </label>
-          {codeState === "checking" && <p className="field-msg"><span className="btn-spinner dark" /> Checking code…</p>}
-          {codeState === "wrong" && <p className="field-msg error">That code doesn’t match. Try again. ({3 - attempts} left)</p>}
-          {codeState === "expired" && <p className="field-msg error">This code has expired. <button onClick={resend} disabled={cooldown > 0}>Request a new code</button></p>}
-          {codeState === "resent" && <p className="field-msg ok">New code sent. Use the latest code in your inbox.</p>}
-          {codeState === "ok" && <p className="field-msg ok"><Icon name="check" size={14} /> Email verified</p>}
-          <p className="demo-hint">Demo: 123456 is correct · 000000 is expired.</p>
-          <div className="auth-links"><button onClick={resend} disabled={cooldown > 0}>{cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}</button><button onClick={() => { setCode(""); setCodeState("idle"); setStep("email"); }}>Change email</button></div>
-          <button className="primary" disabled={code.length < 6 || codeState === "checking" || codeState === "ok"} onClick={() => verify(code)}>Verify</button>
-        </>}
+      {step === "verify" && <>
+        {top()}
+        <h1>Enter the code we sent you</h1>
+        <p className="sub">We sent a 5-digit code to <b>{masked}</b></p>
+        <label className={`fx-otp ${bad ? "error" : ""}`}>
+          <input ref={otpRef} inputMode="numeric" autoComplete="one-time-code" value={code} onChange={(ev) => onCode(ev.target.value)} disabled={codeState === "checking" || codeState === "ok" || locked} aria-label="Verification code" />
+          {Array.from({ length: 5 }).map((_, k) => <span key={k} className={!bad && k === code.length && codeState !== "checking" ? "cur" : code[k] ? "filled" : ""}>{code[k] ?? ""}</span>)}
+        </label>
+        {codeState === "wrong" && <p className="fx-help error">That code is incorrect. Please try again.</p>}
+        {codeState === "expired" && <p className="fx-help error">This code has expired. Request a new code.</p>}
+        {codeState === "resent" && <p className="fx-help ok">New code sent. Use the latest code in your inbox.</p>}
+        <div className="fx-resend">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5" /></svg>
+          {cooldown > 0 ? <span>Resend in {cooldown} seconds</span> : <button onClick={resend}>Resend Code</button>}
+        </div>
+        <p className="demo">Demo: 12345 is correct · 00000 is expired.</p>
+        <div className="grow" />
+        <button className="fx-btn" disabled={code.length < 5 || codeState === "checking" || codeState === "ok"} onClick={() => verify(code)}>Done</button>
+      </>}
 
-        {step === "username" && <>
-          <h1>Choose a username</h1>
-          <p className="subcopy">This is how people will find you on D-Arena.</p>
-          <label className={`field prefix ${nameState === "taken" || nameState === "invalid" || nameState === "length" ? "error" : nameState === "available" ? "ok" : ""}`}><span>Username</span><div><b>@</b><input autoFocus maxLength={30} value={username} onChange={(ev) => setUsername(ev.target.value)} placeholder="yourname" /><small>{username.length}/30</small></div></label>
-          <p className={`field-msg ${nameState === "available" ? "ok" : ["taken", "invalid", "length"].includes(nameState) ? "error" : ""}`}>
-            {{ empty: "Letters, numbers, dots and underscores.", checking: "Checking availability…", available: "Username is available", taken: "That username is taken. Try another.", invalid: "Use only letters, numbers, dots and underscores.", length: "Usernames are 3–30 characters." }[nameState]}
-          </p>
-          {nameState === "taken" && <div className="category-row tight">{[`${username}.moves`, `${username}_ng`, `the.${username}`].map((s) => <button key={s} onClick={() => setUsername(s)}>@{s}</button>)}</div>}
-          <button className="primary" disabled={nameState !== "available"} onClick={() => setStep("password")}>Continue</button>
-        </>}
+      {step === "password" && <>
+        {top()}
+        <h1>Create password</h1>
+        <div className="form">{pwField}</div>
+        <div className="grow" />
+        <button className="fx-btn" disabled={passed < 3 || busy} onClick={() => after(800, () => setStep("username"))}>Continue</button>
+      </>}
 
-        {step === "password" && <>
-          <h1>Create a password</h1>
-          <p className="subcopy">Keep your account and your coins secure.</p>
-          <label className="field prefix"><span>Password</span><div><input autoFocus type={showPw ? "text" : "password"} value={pw} onChange={(ev) => setPw(ev.target.value)} placeholder="••••••••" /><button className="show-toggle" onClick={(ev) => { ev.preventDefault(); setShowPw(!showPw); }}>{showPw ? "Hide" : "Show"}</button></div></label>
-          <div className={`strength s${pw ? passed : 0}`}><i /><i /><i /><span>{!pw ? "" : passed < 2 ? "Weak" : passed < 3 ? "Almost there" : "Strong"}</span></div>
-          <ul className="pw-rules">{rules.map(([r, ok]) => <li key={r} className={ok ? "ok" : ""}><span><Icon name={ok ? "check" : "x"} size={11} /></span>{r}</li>)}</ul>
-          <button className="primary" disabled={passed < 3} onClick={() => { setPw2(""); setPwErr(""); setStep("confirm"); }}>Continue</button>
-        </>}
+      {step === "username" && <>
+        {top()}
+        <h1>Choose a username</h1>
+        <div className="form">
+          <div>
+            <label className={`fx-input ${["taken", "invalid", "length"].includes(nameState) ? "error" : ""}`}>
+              <input autoFocus maxLength={30} value={username} onChange={(ev) => setUsername(ev.target.value)} placeholder="Username" aria-label="Username" />
+              {username && <button type="button" onClick={() => setUsername("")} aria-label="Clear username"><Icon name="x" size={18} /></button>}
+            </label>
+            <p className="fx-counter">{username.length}/30</p>
+            {nameState !== "empty" && <p className={`fx-help ${nameState === "available" ? "ok" : ["taken", "invalid", "length"].includes(nameState) ? "error" : ""}`}>
+              {{ checking: "Checking availability…", available: "Username is available", taken: "That username is taken. Try another.", invalid: "Use only letters, numbers, dots and underscores.", length: "Usernames are 3–30 characters." }[nameState]}
+            </p>}
+            {nameState === "taken" && <div className="fx-chips" style={{ padding: 0, marginTop: 12 }}>{[`${username}.moves`, `${username}_ng`, `the.${username}`].map((s) => <button key={s} onClick={() => setUsername(s)}>@{s}</button>)}</div>}
+          </div>
+        </div>
+        <div className="grow" />
+        <button className="fx-btn" disabled={nameState !== "available" || busy} onClick={() => after(800, () => setStep("done"))}>Continue</button>
+      </>}
 
-        {step === "confirm" && <>
-          <h1>Confirm your password</h1>
-          <p className="subcopy">Enter it again to make sure it matches.</p>
-          <label className={`field ${pwErr ? "error" : ""}`}><span>Confirm password</span><input autoFocus type="password" value={pw2} onChange={(ev) => { setPw2(ev.target.value); setPwErr(""); }} placeholder="••••••••" /></label>
-          {pwErr && <p className="field-msg error">{pwErr}</p>}
-          <button className="primary" disabled={!pw2 || busy} onClick={() => { if (pw2 !== pw) return setPwErr("Passwords don’t match."); setBusy(true); window.setTimeout(() => { setBusy(false); setStep("done"); }, 1000); }}>{busy ? <><span className="btn-spinner" /> Creating account…</> : "Create account"}</button>
-        </>}
-      </main>
-      {locked && <div className="sheet-backdrop"><div className="sheet"><div className="sheet-handle" /><div className="sheet-state"><div className="state-icon warn"><Icon name="lock" size={24} /></div><h2>Too many attempts</h2><p>You’ve tried too many times. Please wait before trying again.</p></div><button className="primary" onClick={() => { setLocked(false); setAttempts(0); setCodeState("idle"); setCooldown(30); }}>OK</button></div></div>}
+      {(busy || codeState === "checking") && <FxBusy />}
+      {locked && <div className="sheet-backdrop"><div className="sheet"><div className="sheet-handle" /><div className="sheet-state"><div className="state-icon warn"><Icon name="lock" size={24} /></div><h2>Too many attempts</h2><p>You’ve tried too many times. Please wait before trying again.</p></div><button className="fx-btn" onClick={() => { setLocked(false); setAttempts(0); setCodeState("idle"); setCooldown(20); }}>OK</button></div></div>}
     </div>
   );
 }
+
 
 let noteId = 10;
 
@@ -2908,6 +3117,7 @@ export default function App() {
   };
 
   const isTab = ["home", "discover", "competitions", "wallet", "profile"].includes(route.screen);
+  const navTab = (isTab ? route.screen : route.screen === "notifications" ? "home" : null) as Tab | null;
   const unread = notes.some((n) => n.unread);
   const content = (() => {
     switch (route.screen) {
@@ -2932,15 +3142,16 @@ export default function App() {
       case "judgeEntry": return <JudgeEntryScreen key={route.pick} route={route} />;
       case "judgeAwarded": return <JudgeAwarded key={route.pick} route={route} />;
       case "judgeThanks": return <JudgeThanks />;
+      case "fans": return <FansScreen route={route} />;
     }
   })();
 
   return (
     <ArenaContext.Provider value={ctx}>
-      <div className={`app-shell ${isTab && authed ? "with-nav" : ""} ${unread ? "" : "all-read"}`}>
+      <div className={`app-shell fx-shell ${navTab && authed ? "with-nav" : ""} ${unread ? "" : "all-read"}`}>
         {!authed ? <Auth onDone={(u) => { setAuthed(true); setStack([{ screen: "home" }]); showToast(`Welcome to the Arena, @${u}`); window.setTimeout(() => setPush({ title: "You’ve been invited to judge Street Dance Cypher", body: "Private invitation. Tap to review the details.", route: { screen: "judgeInvite" }, k: Date.now() }), 3200); }} /> : <>
         <div className="screen-anim" key={`${route.screen}-${stack.length}`}>{content}</div>
-        {isTab && <BottomNav active={route.screen as Tab} setTab={setTab} openCreate={() => setCreate(true)} />}
+        {navTab && <BottomNav active={navTab} setTab={setTab} openCreate={() => setCreate(true)} />}
         {create && <CreateSheet close={() => setCreate(false)} />}
         {host && <HostSheet close={() => setHost(false)} />}
         {judgeSim && <JudgeSim close={() => setJudgeSim(false)} />}
