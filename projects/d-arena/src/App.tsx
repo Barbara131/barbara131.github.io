@@ -557,67 +557,6 @@ function HubCard({ c }: { c: Comp }) {
   return <CompCard c={c} />;
 }
 
-/* ───────── Competitions on a line: pegged cards you swipe, tap to expand ───────── */
-const HL_W = 232, HL_GAP = 26;
-
-function Peg() {
-  return (
-    <svg className="hl-peg" width="18" height="34" viewBox="0 0 18 34" aria-hidden="true">
-      <rect x="2" y="0" width="6" height="32" rx="2.5" fill="url(#pegw)" />
-      <rect x="10" y="0" width="6" height="32" rx="2.5" fill="url(#pegw)" />
-      <rect x="1" y="12" width="16" height="5" rx="2" fill="#c9cdd2" />
-      <rect x="1" y="12" width="16" height="2" rx="1" fill="#eef0f2" />
-      <defs><linearGradient id="pegw" x1="0" x2="1"><stop offset="0" stopColor="#d9a35a" /><stop offset=".5" stopColor="#f0c27e" /><stop offset="1" stopColor="#b5803c" /></linearGradient></defs>
-    </svg>
-  );
-}
-
-function HangingLine({ list, onOpen }: { list: Comp[]; onOpen: (c: Comp, el: HTMLElement) => void }) {
-  const a = useArena();
-  const ref = useRef<HTMLDivElement>(null);
-  const [cur, setCur] = useState(0);
-  const go = (k: number) => { const el = ref.current; if (el) el.scrollTo({ left: k * (HL_W + HL_GAP), behavior: "smooth" }); };
-  const seg = HL_W + HL_GAP;
-  return (
-    <div className="hl">
-      <div className="hl-track" ref={ref} onScroll={(ev) => setCur(Math.min(list.length - 1, Math.round(ev.currentTarget.scrollLeft / seg)))}>
-        <span className="hl-pad" />
-        {list.map((c, k) => {
-          const st = stageInfo(c);
-          return (
-            <div key={c.id} className={`hl-item ${k === cur ? "cur" : ""}`} style={{ width: HL_W, marginRight: k === list.length - 1 ? 0 : HL_GAP, animationDelay: `${k * 0.12}s` }}>
-              <svg className="hl-string" width={seg + 2} height="34" viewBox={`0 0 ${seg + 2} 34`} aria-hidden="true"><path d={`M-1 6 Q ${HL_W / 2} 26 ${seg + 1} 6`} /></svg>
-              <div className="hl-swing" style={{ animationDelay: `${(k % 3) * 0.7}s` }}>
-                <Peg />
-                <button className="hl-card" onClick={(ev) => onOpen(c, ev.currentTarget)} aria-label={`Open ${c.name}`}>
-                  <img src={c.image} alt="" />
-                  <span className="chip"><i className={c.phase === "voting" ? "live" : ""} />{st.label}</span>
-                  {c.id === "bdm" && a.journey.registered && <span className="you">YOU’RE IN</span>}
-                  <span className="info">
-                    <small>{c.category} · {c.cadence}</small>
-                    <b>{c.name}</b>
-                    <span className="meta"><span><Icon name="calendar" size={12} />{passDates(lobbySchedule(c))}</span><span><Icon name="users" size={12} />{kfmt(c.contestants)}</span></span>
-                    <span className="prize">{c.prize}<em>Tap to open</em></span>
-                  </span>
-                </button>
-              </div>
-            </div>
-          );
-        })}
-        <span className="hl-pad" />
-      </div>
-      {list.length > 1 && (
-        <div className="hl-nav">
-          <button className="fx-circle" disabled={cur === 0} onClick={() => go(cur - 1)} aria-label="Previous competition"><FxIcon src={fx.iArrowLeft} /></button>
-          <span className="dots">{list.map((c, k) => <i key={c.id} className={k === cur ? "on" : ""} />)}</span>
-          <button className="fx-circle" disabled={cur === list.length - 1} onClick={() => go(cur + 1)} aria-label="Next competition"><FxIcon src={fx.iArrowRight} /></button>
-        </div>
-      )}
-      <p className="hl-hint">{cur + 1} of {list.length} · swipe the line to see more</p>
-    </div>
-  );
-}
-
 function CompetitionsPage() {
   const a = useArena();
   const [tab, setTab] = useState("Ongoing");
@@ -631,8 +570,11 @@ function CompetitionsPage() {
         <label className="fx-search"><FxIcon src={fx.iSearchNormal} size={18} /><input value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Search for competitions" aria-label="Search for competitions" />{q && <button onClick={() => setQ("")} aria-label="Clear search"><FxIcon src={fx.iClose} size={18} /></button>}</label>
         <nav className="fx-tabs even">{Object.keys(groups).map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t} ({groups[t].length})</button>)}</nav>
       </div>
-      {list.length ? <HangingLine key={tab + q} list={list} onOpen={(c) => a.go({ screen: "competition", comp: c.id })} />
-        : <FxEmpty icon={fx.iCup} title={q ? "No competitions match" : "No competitions here yet"} copy={q ? `We couldn’t find “${q}”. Try a category like Dance or Comedy.` : "New competitions are announced every week."} action={q ? "Clear search" : "View ongoing competitions"} onClick={() => { setQ(""); setTab("Ongoing"); }} />}
+      {list.length ? (
+        <div className="fx-hub-list">{list.map((c, i) => <div key={c.id} style={{ display: "grid", gap: 18 }}>{i > 0 && <div className="fx-hub-sep" />}<CompCard c={c} /></div>)}</div>
+      ) : (
+        <FxEmpty icon={fx.iCup} title={q ? "No competitions match" : "No competitions here yet"} copy={q ? `We couldn’t find “${q}”. Try a category like Dance or Comedy.` : "New competitions are announced every week."} action={q ? "Clear search" : "View ongoing competitions"} onClick={() => { setQ(""); setTab("Ongoing"); }} />
+      )}
     </div>
   );
 }
