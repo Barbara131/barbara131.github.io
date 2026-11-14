@@ -3356,27 +3356,128 @@ function DiscoverPage() {
 }
 
 
+function Coin({ size = 20 }: { size?: number }) {
+  return (
+    <svg className="coin-ic" width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ffe9a3" /><stop offset=".5" stopColor="#f9c846" /><stop offset="1" stopColor="#b98513" /></linearGradient></defs>
+      <circle cx="12" cy="12" r="11" fill="url(#cg)" />
+      <circle cx="12" cy="12" r="8.4" fill="none" stroke="#fff3c4" strokeOpacity=".7" strokeWidth="1" />
+      <path d="M9.2 7.4h3.1a4.6 4.6 0 0 1 0 9.2H9.2zm2 2v5.2h1.1a2.6 2.6 0 0 0 0-5.2z" fill="#7a5408" />
+    </svg>
+  );
+}
+
+const coinPacks: { n: number; price: number; bonus?: number; tag?: string }[] = [
+  { n: 70, price: 150 }, { n: 350, price: 700 }, { n: 700, price: 1400, tag: "Popular" },
+  { n: 1400, price: 2800, bonus: 50 }, { n: 3500, price: 7000, bonus: 200 }, { n: 7000, price: 13500, bonus: 500, tag: "Best value" },
+  { n: 17500, price: 33000, bonus: 1500 },
+];
+const naira = (n: number) => `₦${n.toLocaleString()}`;
+
+function GetCoinsSheet({ coins, setCoins, close, done }: { coins: number; setCoins: (n: number) => void; close: () => void; done: (added: number) => void }) {
+  const [sel, setSel] = useState(2);
+  const [custom, setCustom] = useState("");
+  const [method, setMethod] = useState("card");
+  const [state, setState] = useState<"pick" | "paying" | "ok">("pick");
+  const customN = Math.min(500000, Number(custom) || 0);
+  const pack = sel === -1 ? { n: customN, price: Math.round(customN * 2.1) } : coinPacks[sel];
+  const total = pack.n + (("bonus" in pack && pack.bonus) || 0);
+  const pay = () => { if (!pack.n) return; setState("paying"); window.setTimeout(() => { setCoins(coins + total); setState("ok"); }, 1300); };
+  return (
+    <div className="fx fx-csheet-wrap" onClick={state === "paying" ? undefined : close}>
+      <div className="fx-csheet gc" role="dialog" aria-label="Get coins" onClick={(ev) => ev.stopPropagation()}>
+        <span className="grab" />
+        <header><b>Get coins</b><button className="x" onClick={close} aria-label="Close"><Icon name="x" size={18} /></button></header>
+        {state === "ok" ? (
+          <div className="gc-ok"><span className="burst"><Coin size={64} /></span><b>+{total.toLocaleString()} coins</b><p>Added to your wallet. New balance: <strong>{(coins).toLocaleString()}</strong></p><button className="fx-btn" onClick={() => done(total)}>Done</button></div>
+        ) : <>
+          <div className="list">
+            <div className="gc-bal"><span>Your balance</span><b><Coin size={20} />{coins.toLocaleString()}</b></div>
+            <div className="gc-rows">
+              {coinPacks.map((p, k) => (
+                <button key={p.n} className={sel === k ? "on" : ""} onClick={() => setSel(k)}>
+                  <Coin size={26} />
+                  <span className="n"><b>{p.n.toLocaleString()}</b>{p.bonus ? <small>+{p.bonus.toLocaleString()} bonus</small> : <small>coins</small>}</span>
+                  {p.tag && <em>{p.tag}</em>}
+                  <span className="pr">{naira(p.price)}</span>
+                </button>
+              ))}
+              <label className={`custom ${sel === -1 ? "on" : ""}`} onClick={() => setSel(-1)}>
+                <Coin size={26} />
+                <input inputMode="numeric" value={custom} onChange={(ev) => { setSel(-1); setCustom(ev.target.value.replace(/\D/g, "").slice(0, 6)); }} placeholder="Custom amount" aria-label="Custom coin amount" />
+                <span className="pr">{customN ? naira(Math.round(customN * 2.1)) : "₦0"}</span>
+              </label>
+            </div>
+            <div className="cp-h"><b>Pay with</b></div>
+            <div className="gc-pay">{[["card", "Card", "Visa •••• 4242"], ["bank", "Bank transfer", "Instant, any Nigerian bank"], ["ussd", "USSD", "*737# and others"]].map(([k, t, s]) => <button key={k} className={method === k ? "on" : ""} onClick={() => setMethod(k)}><span><b>{t}</b><small>{s}</small></span><i>{method === k && <Icon name="check" size={12} />}</i></button>)}</div>
+            <p className="gc-note">Coins are used for votes, gifts and VIP seats. They can’t be withdrawn as cash.</p>
+          </div>
+          <div className="cp-post"><button className="fx-btn" disabled={!pack.n || state === "paying"} onClick={pay}>{state === "paying" ? "Processing payment…" : `Pay ${naira(pack.price)} · get ${total.toLocaleString()} coins`}</button></div>
+        </>}
+      </div>
+    </div>
+  );
+}
+
 function WalletPage({ resume, coins, setCoins, showToast, openEarnings }: { resume?: boolean; coins: number; setCoins: (n: number) => void; showToast: (s: string) => void; openEarnings: () => void }) {
   const a = useArena();
-  const [buying, setBuying] = useState(!!resume);
-  const [selected, setSelected] = useState(500);
-  const [state, setState] = useState<"idle" | "paying">("idle");
-  const price: Record<number, string> = { 500: "₦800", 2000: "₦2,800", 5000: "₦6,500" };
-  const buy = () => { setState("paying"); window.setTimeout(() => { setCoins(coins + selected); setState("idle"); setBuying(false); showToast(`${selected.toLocaleString()} coins added`); if (resume) a.back(); }, 1200); };
+  const [sheet, setSheet] = useState(!!resume);
+  const [filter, setFilter] = useState("All");
+  const [sel, setSel] = useState(2);
+  const acts: [string, string, string, string, "coin" | "money", boolean][] = [
+    ["bolt", "Coins purchased", "Today, 9:42 AM", "+2,000", "coin", true],
+    ["star", "Voted for @zurimoves", "Yesterday, 8:10 PM", "−50", "coin", false],
+    ["gift", "Sent Fire to @temi_dance", "Yesterday, 7:55 PM", "−50", "coin", false],
+    ["ticket", "VIP seat · Best Dance Moves", "Oct 3, 6:58 PM", "−20", "coin", false],
+    ["wallet", "Withdrawal approved", "Oct 2, 3:16 PM", "−₦20,000", "money", false],
+    ["trophy", "Competition reward", "Sep 28", "+₦5,000", "money", true],
+  ];
+  const shown = acts.filter((x) => filter === "All" || (filter === "Coins" ? x[4] === "coin" : x[4] === "money"));
   return (
-    <>
-      <TopBar title="Wallet" />
-      <main className="page wallet-page">
-        {resume && <div className="banner show"><Icon name="info" size={17} /><p><strong>Top up to keep voting</strong>After you buy coins we’ll take you straight back to the entry.</p></div>}
-        <div className="wallet-card"><div className="wallet-glow" /><span>COINS</span><strong>{coins.toLocaleString()}</strong><small>For voting and gifting · not withdrawable</small><button onClick={() => setBuying(true)}><Icon name="plus" size={17} /> Buy coins</button></div>
-        <button className="earnings-card" onClick={openEarnings}><div><span>EARNINGS</span><strong>₦18,500</strong><small>Withdrawable · ₦2,400 pending</small></div><div className="earnings-arrow"><Icon name="arrow" /></div></button>
-        <div className="section-head wallet-head"><div><h2>Recent activity</h2></div></div>
-        <div className="activity">
-          {[["bolt", "Coins purchased", "Today, 9:42 AM", "+2,000 coins", "positive"], ["heart", "Voted for @zurimoves", "Yesterday, 8:10 PM", "−50 coins", ""], ["wallet", "Withdrawal approved", "Oct 2, 3:16 PM", "−₦20,000", "money"], ["trophy", "Competition reward", "Sep 28", "+₦5,000", "money"]].map((x) => <div key={x[1]}><span className="activity-icon"><Icon name={x[0]} size={19} /></span><p><strong>{x[1]}</strong><small>{x[2]}</small></p><b className={x[4]}>{x[3]}</b></div>)}
+    <div className="fx wl">
+      <header className="wl-head">
+        <h1>Wallet</h1>
+        <button className="wl-pill" onClick={() => setSheet(true)} aria-label={`${coins} coins. Get coins`}><Coin size={20} /><b>{coins.toLocaleString()}</b><span className="plus"><Icon name="plus" size={12} /></span></button>
+      </header>
+      {resume && <div className="wl-banner"><Icon name="info" size={16} /><p><b>Top up to keep voting.</b> After you buy coins we’ll take you straight back to the entry.</p></div>}
+      <section className="wl-card">
+        <span className="glow" aria-hidden="true" />
+        <small>COIN BALANCE</small>
+        <div className="bal"><Coin size={40} /><b>{coins.toLocaleString()}</b></div>
+        <p>≈ {Math.floor(coins / VOTE_COST).toLocaleString()} votes · used for votes, gifts and VIP seats</p>
+        <div className="acts"><button className="fx-btn md" onClick={() => setSheet(true)}><Icon name="plus" size={16} /> Get coins</button><button className="fx-btn md grey" onClick={() => setFilter("Coins")}>History</button></div>
+      </section>
+      <button className="wl-earn" onClick={openEarnings}>
+        <span className="ic"><Icon name="trophy" size={20} /></span>
+        <span className="t"><small>EARNINGS</small><b>₦18,500</b><em>Withdrawable · ₦2,400 pending</em></span>
+        <span className="go">Withdraw <Icon name="arrow" size={14} /></span>
+      </button>
+      <section className="wl-sec">
+        <div className="cs-h"><h4>Recharge</h4><button onClick={() => setSheet(true)}>See all</button></div>
+        <div className="wl-grid">{coinPacks.slice(0, 6).map((p, k) => (
+          <button key={p.n} className={sel === k ? "on" : ""} onClick={() => { setSel(k); setSheet(true); }}>
+            {p.tag && <em>{p.tag}</em>}
+            <Coin size={28} /><b>{p.n.toLocaleString()}</b>{p.bonus ? <small>+{p.bonus} bonus</small> : <small>coins</small>}<span>{naira(p.price)}</span>
+          </button>
+        ))}</div>
+      </section>
+      <section className="wl-sec">
+        <div className="cs-h"><h4>What coins do</h4></div>
+        <div className="wl-uses">
+          <div><span className="ic"><Icon name="star" size={18} /></span><b>Vote</b><small>{VOTE_COST} coins a vote</small></div>
+          <div><span className="ic"><Icon name="gift" size={18} /></span><b>Gift</b><small>From 10 coins</small></div>
+          <div><span className="ic"><Icon name="ticket" size={18} /></span><b>VIP seat</b><small>20 coins</small></div>
         </div>
-      </main>
-      {buying && <div className="sheet-backdrop" onClick={() => setBuying(false)}><div className="sheet" onClick={(e) => e.stopPropagation()}><div className="sheet-handle" /><div className="sheet-title"><div><span>COINS</span><h2>Buy coins</h2></div><button onClick={() => setBuying(false)}>×</button></div><p>Coins let you vote beyond your free daily vote and send gifts during live performances.</p><div className="coin-packages">{[500, 2000, 5000].map((p) => <button key={p} className={selected === p ? "active" : ""} onClick={() => setSelected(p)}><b>{p.toLocaleString()}</b><span>COINS</span><small>{price[p]}</small>{p === 2000 && <i>POPULAR</i>}</button>)}</div><button className="primary" disabled={state === "paying"} onClick={buy}>{state === "paying" ? "Processing payment…" : `Pay ${price[selected]}`}</button><small className="secure">Secure payment · Balance updates instantly</small></div></div>}
-    </>
+      </section>
+      <section className="wl-sec">
+        <div className="cs-h"><h4>Activity</h4></div>
+        <div className="fx-chips" style={{ padding: 0 }}>{["All", "Coins", "Earnings"].map((f) => <button key={f} className={filter === f ? "on" : ""} onClick={() => setFilter(f)}>{f}</button>)}</div>
+        <div className="wl-acts">{shown.map(([ic, t, when, amt, kind, plus]) => (
+          <div key={t}><span className={`ic ${kind}`}><Icon name={ic} size={18} /></span><span className="t"><b>{t}</b><small>{when}</small></span><span className={`amt ${plus ? "plus" : ""}`}>{kind === "coin" && <Coin size={14} />}{amt}</span></div>
+        ))}</div>
+      </section>
+      {sheet && <GetCoinsSheet coins={coins} setCoins={setCoins} close={() => setSheet(false)} done={(n) => { setSheet(false); showToast(`${n.toLocaleString()} coins added`); if (resume) a.back(); }} />}
+    </div>
   );
 }
 
