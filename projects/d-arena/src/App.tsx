@@ -618,50 +618,10 @@ function HangingLine({ list, onOpen }: { list: Comp[]; onOpen: (c: Comp, el: HTM
   );
 }
 
-function ExpandedComp({ c, from, onClose }: { c: Comp; from: DOMRect; onClose: () => void }) {
-  const a = useArena();
-  const [open, setOpen] = useState(false);
-  useEffect(() => { const r = requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true))); return () => cancelAnimationFrame(r); }, []);
-  const close = () => { setOpen(false); window.setTimeout(onClose, 380); };
-  const shell = document.querySelector(".app-shell") as HTMLElement | null;
-  const sr = shell?.getBoundingClientRect();
-  const target = { top: 0, left: sr ? sr.left : 0, width: sr ? sr.width : window.innerWidth, height: window.innerHeight };
-  const box = open ? target : { top: from.top, left: from.left, width: from.width, height: from.height };
-  const st = stageInfo(c);
-  const go = (r: Route) => { onClose(); a.go(r); };
-  return (
-    <div className={`hx ${open ? "open" : ""}`}>
-      <div className="hx-dim" onClick={close} />
-      <div className="hx-card" style={{ top: box.top, left: box.left, width: box.width, height: box.height }} role="dialog" aria-label={c.name}>
-        <div className="hx-hero"><img src={c.image} alt="" /><button className="fx-circle" onClick={close} aria-label="Close"><Icon name="x" size={20} /></button>
-          <div className="hx-ttl"><span className="chip"><i className={c.phase === "voting" ? "live" : ""} />{st.label}</span><h2>{c.name}</h2><small>{c.category} · {c.cadence}</small></div>
-        </div>
-        <div className="hx-body">
-          <div className="hx-meta">
-            <span className="fx-meta"><FxIcon src={fx.iCalendar} size={20} />Date: <em>{passDates(lobbySchedule(c))}</em></span>
-            <span className="fx-meta"><FxIcon src={fx.iTicket} size={20} />Fee: <em>FREE</em></span>
-            {c.time && <span className="fx-meta"><Icon name="clock" size={18} /><em>{c.time}</em></span>}
-          </div>
-          <div className="hx-stats"><div><small>Grand prize</small><b className="gold">{c.prize}</b></div><div><small>Contestants</small><b>{c.contestants.toLocaleString()}</b></div><div><small>Rounds</small><b>{c.totalRounds}</b></div></div>
-          <p className="hx-about">{c.about}</p>
-          {c.entries.length > 0 && <div className="hx-faces"><span className="stack">{c.entries.slice(0, 5).map((e) => <img key={e.id} src={e.image} alt="" />)}</span><span><b>{c.entries[0].handle}</b> and others are on stage</span></div>}
-        </div>
-        <div className="hx-foot">
-          <button className="fx-btn" onClick={() => go({ screen: "competition", comp: c.id })}>View competition</button>
-          {arenaOpen(c.phase) ? <button className="fx-btn md grey" onClick={() => go({ screen: "arena", comp: c.id })}>Enter the Arena</button>
-            : regOpen(c) ? <button className="fx-btn md grey" onClick={() => go({ screen: "register", comp: c.id })}>Register now</button>
-            : <button className="fx-btn md grey" onClick={() => { a.act(c, "notify"); }}>{a.following.includes(c.id) ? "Reminder on" : "Remind me"}</button>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function CompetitionsPage() {
   const a = useArena();
   const [tab, setTab] = useState("Ongoing");
   const [q, setQ] = useState("");
-  const [open, setOpen] = useState<{ c: Comp; r: DOMRect } | null>(null);
   const groups: Record<string, CompId[]> = { Ongoing: ["bdm", "dance", "food", "voice", "comedy"], Upcoming: ["face"], Past: ["kings"] };
   const list = groups[tab].map(a.comp).filter((c) => (c.name + c.category).toLowerCase().includes(q.trim().toLowerCase()));
   return (
@@ -671,9 +631,8 @@ function CompetitionsPage() {
         <label className="fx-search"><FxIcon src={fx.iSearchNormal} size={18} /><input value={q} onChange={(ev) => setQ(ev.target.value)} placeholder="Search for competitions" aria-label="Search for competitions" />{q && <button onClick={() => setQ("")} aria-label="Clear search"><FxIcon src={fx.iClose} size={18} /></button>}</label>
         <nav className="fx-tabs even">{Object.keys(groups).map((t) => <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t} ({groups[t].length})</button>)}</nav>
       </div>
-      {list.length ? <HangingLine key={tab + q} list={list} onOpen={(c, el) => setOpen({ c, r: el.getBoundingClientRect() })} />
+      {list.length ? <HangingLine key={tab + q} list={list} onOpen={(c) => a.go({ screen: "competition", comp: c.id })} />
         : <FxEmpty icon={fx.iCup} title={q ? "No competitions match" : "No competitions here yet"} copy={q ? `We couldn’t find “${q}”. Try a category like Dance or Comedy.` : "New competitions are announced every week."} action={q ? "Clear search" : "View ongoing competitions"} onClick={() => { setQ(""); setTab("Ongoing"); }} />}
-      {open && <ExpandedComp c={open.c} from={open.r} onClose={() => setOpen(null)} />}
     </div>
   );
 }
