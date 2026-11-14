@@ -926,8 +926,17 @@ function Signposts({ c, onOpen }: { c: Comp; onOpen: (k: ShowArea) => void }) {
   const a = useArena();
   const top3 = rankList(a.votesOf, c).slice(0, 3);
   const icons: Record<ShowArea, string> = { Overview: "ticket", Rules: "scroll", Leaderboard: "scoreboard", Results: "mic" };
+  const ref = useRef<HTMLElement>(null);
+  const [go, setGo] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") { setGo(true); return; }
+    const io = new IntersectionObserver(([en]) => { if (en.isIntersecting) { setGo(true); io.disconnect(); } }, { threshold: 0.12, rootMargin: "0px 0px -230px 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
-    <section className="fx-signs" aria-label="Explore the show">
+    <section ref={ref} className={`fx-signs ${go ? "go" : ""}`} aria-label="Explore the show">
       <p className="fx-signs-kicker">FOLLOW THE SIGNS INTO THE SHOW</p>
       <div className="fx-signs-post">
         <span className="pole" aria-hidden="true"><i /></span>
@@ -935,7 +944,7 @@ function Signposts({ c, onOpen }: { c: Comp; onOpen: (k: ShowArea) => void }) {
           const t = signTeaser(c, k, top3);
           const side = i % 2 === 0 ? "l" : "r";
           return (
-            <button key={k} className={`fx-sign ${side} ${t.locked ? "locked" : ""}`} style={{ animationDelay: `${0.15 + i * 0.16}s` }} onClick={() => onOpen(k)} aria-label={`${k}: ${t.title}. ${t.line}`}>
+            <button key={k} className={`fx-sign ${side} ${t.locked ? "locked" : ""}`} style={{ "--d": `${0.45 + i * 0.22}s` } as React.CSSProperties} onClick={() => onOpen(k)} aria-label={`${k}: ${t.title}. ${t.line}`}>
               <span className="nail a" /><span className="nail b" />
               <span className="ic"><Icon name={icons[k]} size={18} /></span>
               <span className="txt"><small>{k.toUpperCase()}{t.live && <b><i />LIVE</b>}</small><strong>{t.title}</strong><em>{t.locked && <Icon name="lock" size={11} />}{t.line}</em></span>
