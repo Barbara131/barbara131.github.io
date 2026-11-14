@@ -1766,6 +1766,77 @@ function Auditorium({ pick, setPick, mode }: { pick: [number, number] | null; se
   );
 }
 
+const SEAT_PICK_ROWS = 7;
+const seatShort = (p: [number, number]) => `${SEAT_ROWS[p[0]]}${p[1] + 1}`;
+const seatVip = (r: number, s: number) => { const n = seatsIn(r); const mid = (n - 1) / 2; return r === 0 || (r === 1 && Math.abs(s - mid) <= 2); };
+function Laurel({ flip }: { flip?: boolean }) {
+  return (
+    <svg className="laurel" width="22" height="42" viewBox="0 0 34 64" style={flip ? { transform: "scaleX(-1)" } : undefined} aria-hidden="true">
+      <path d="M26 62C10 52 6 34 12 4" stroke="url(#lg)" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      {[10, 20, 30, 40, 50].map((y, k) => <g key={y}><ellipse cx={k < 2 ? 12 : 10 + k} cy={y} rx="7" ry="3.4" transform={`rotate(-38 ${k < 2 ? 12 : 10 + k} ${y})`} fill="url(#lg)" /><ellipse cx={k < 2 ? 18 : 16 + k} cy={y + 4} rx="6" ry="3" transform={`rotate(32 ${k < 2 ? 18 : 16 + k} ${y + 4})`} fill="url(#lg)" /></g>)}
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#ffe58a" /><stop offset="1" stopColor="#b98513" /></linearGradient></defs>
+    </svg>
+  );
+}
+
+function SeatPicker({ c, pick, setPick, take, anywhere }: { c: Comp; pick: [number, number] | null; setPick: (p: [number, number]) => void; take: () => void; anywhere: () => void }) {
+  const a = useArena();
+  const vip = pick ? seatVip(pick[0], pick[1]) : false;
+  const faces = c.entries.slice(0, 3).map((e) => e.image);
+  return (
+    <div className="sp">
+      <div className="sp-hero">
+        <img className="bg" src={c.image} alt="" />
+        <span className="beams" aria-hidden="true"><i /><i /><i /><i /></span>
+        <div className="bar">
+          <button className="fx-circle ring-fill" onClick={a.back} aria-label="Leave"><FxIcon src={fx.iArrowLeft} /></button>
+          <button className="fx-circle ring-fill" onClick={() => a.toast("Show link copied")} aria-label="Share"><FxIcon src={fx.iShare} /></button>
+        </div>
+        <div className="ttl">
+          <small>{c.name.toUpperCase()} · ROUND {c.round}</small>
+          <div className="row"><Laurel /><h2>TAKE YOUR SEAT</h2><Laurel flip /></div>
+          <span className="aud"><span className="stack">{(faces.length ? faces : [fx.fan2, fx.fan3, fx.fan4]).map((f, k) => <img key={k} src={f} alt="" />)}</span><i />12,438 in the audience</span>
+        </div>
+      </div>
+      <div className="sp-stage"><span>STAGE</span></div>
+      <div className="sp-map">
+        {SEAT_ROWS.slice(0, SEAT_PICK_ROWS).map((row, r) => {
+          const n = seatsIn(r);
+          return (
+            <div key={row} className="sp-row">
+              <em>{row}</em>
+              <div>{Array.from({ length: n }).map((_, k) => {
+                const t = (k - (n - 1) / 2) / ((n - 1) / 2);
+                const taken = seatTaken(r, k) && (r * 3 + k) % 4 === 0;
+                const v = seatVip(r, k);
+                const mine = pick?.[0] === r && pick?.[1] === k;
+                return (
+                  <button key={k} disabled={taken} className={`ch ${taken ? "taken" : v ? "vip" : "free"} ${mine ? "mine" : ""}`} style={{ transform: `translateY(${-t * t * (6 + r * 2)}px) rotate(${t * 9}deg)` }} onClick={() => setPick([r, k])} aria-label={`Row ${row} seat ${k + 1}${taken ? ", taken" : v ? ", VIP" : ""}`}>
+                    {mine && <Icon name="check" size={12} />}
+                  </button>
+                );
+              })}</div>
+              <em>{row}</em>
+            </div>
+          );
+        })}
+      </div>
+      <div className="sp-legend"><span><i className="free" />Free</span><span><i className="vip" />VIP</span><span><i className="mine"><Icon name="check" size={9} /></i>Selected</span><span><i className="taken" />Taken</span></div>
+      <div className="sp-ticket">
+        <div className="tk" key={pick ? seatShort(pick) : "none"}>
+          <span className="ic"><Icon name="ticket" size={22} /></span>
+          <div><small>Your Seat</small><b>{pick ? seatShort(pick) : "--"}</b></div>
+          <div><small>Seat Type</small><b>{pick ? (vip ? "VIP" : "Regular") : "--"}</b></div>
+          <div><small>Price</small><b>{pick ? (vip ? "20 coins" : "Free") : "--"}</b></div>
+        </div>
+        <button className="chg" onClick={anywhere}><Icon name="rise" size={16} />{pick ? "Change" : "Seat me"}</button>
+      </div>
+      <button className="sp-take" disabled={!pick} onClick={take}><Icon name="ticket" size={22} /> TAKE MY SEAT</button>
+      <p className="sp-note"><Icon name="info" size={15} /> You can change your seat anytime before the show starts.</p>
+    </div>
+  );
+}
+
 function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
   const a = useArena();
   const [returning, setReturning] = useState(() => !!a.seat);
@@ -1794,19 +1865,7 @@ function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
   };
   return (
     <div className={`seq step-${step}`}>
-      {step === "seat" && <div className="seq-seat">
-        <header className="seq-head">
-          <button className="at-btn" onClick={a.back} aria-label="Leave"><Icon name="back" size={20} /></button>
-          <div><small>{c.name.toUpperCase()} · ROUND {c.round}</small><h2>Take your seat</h2><span><i className="live-dot live" /> 12,438 in the audience</span></div>
-        </header>
-        <Auditorium pick={pick} setPick={setPick} mode="choose" />
-        <div className="seat-legend"><span><i className="free" />Free</span><span><i className="taken" />Taken</span><span><i className="mine" />Yours</span></div>
-        <div className="seq-foot">
-          {pick && <div className="ticket-stub" key={seatLabel(pick)}><div><small>ADMIT ONE · {c.name.toUpperCase()}</small><strong>{seatLabel(pick)}</strong></div><span>FREE</span></div>}
-          <button className="primary" disabled={!pick} onClick={() => take()}>TAKE MY SEAT</button>
-          <button className="ghost-btn" onClick={anywhere}>Seat me anywhere</button>
-        </div>
-      </div>}
+      {step === "seat" && <SeatPicker c={c} pick={pick} setPick={setPick} take={() => take()} anywhere={anywhere} />}
       {step === "seated" && <div className="seq-seated">
         <Auditorium pick={pick} mode="seated" />
         <div className="seated-msg"><Icon name="check" size={22} /><h2>You’re seated</h2><p>{a.seat}</p><small>Get ready. The show starts in a moment.</small></div>
