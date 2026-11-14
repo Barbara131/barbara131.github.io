@@ -1173,7 +1173,7 @@ function HostShow({ c, start, onClose }: { c: Comp; start: "Overview" | "Rules";
         </div>
       </div>
       <div className="hs-stage" onClick={tap}>
-        <div className={`hs-av ${paused || last ? "" : "speaking"}`}><span className="r1" /><span className="r2" /><span className="face"><HostFigure talking={!paused && !last} /></span></div>
+        <div className={`hs-av ${paused || last ? "" : "speaking"}`}><span className="r1" /><span className="r2" /><span className="face"><img src={fx.fan8} alt={HOST.name} /></span></div>
         <p className="hs-name"><b>{HOST.name}</b> · Your host</p>
         <p className="hs-say" key={`s${i}`}>{s.say}</p>
         <div className="hs-vis" key={`v${i}`}>{s.v}</div>

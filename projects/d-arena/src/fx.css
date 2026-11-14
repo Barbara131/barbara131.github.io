@@ -1190,3 +1190,6 @@
 .app-shell.fx-shell .push-hit span { font: 400 13px/18px var(--fx-body); color: var(--g30); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .app-shell.fx-shell .push-x { align-self: center; width: 32px; height: 32px; margin-right: 8px; padding: 0; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.08); color: var(--g30); }
 .app-shell.fx-shell .toast { white-space: normal; overflow: visible; text-overflow: clip; }
+.hs-av .face img { width: 100%; height: 100%; object-fit: cover; display: block; transform-origin: 50% 80%; }
+.hs-av.speaking .face img { animation: hsTalk 1.1s ease-in-out infinite; }
+@keyframes hsTalk { 0%, 100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.03) rotate(-1.5deg); } 50% { transform: scale(1.01) rotate(0); } 75% { transform: scale(1.03) rotate(1.5deg); } }
