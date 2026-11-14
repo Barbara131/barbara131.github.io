@@ -1254,3 +1254,4 @@
 .sp-ticket .tk > div { padding-left: 7px; }
 .sp-ticket .tk b { font-size: 15px; line-height: 20px; }
 .sp-ticket .chg { padding: 0 12px; }
+.sp > * { flex-shrink: 0; }
