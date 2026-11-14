@@ -3249,28 +3249,6 @@ function OnboardArt() {
   );
 }
 
-function AuthPass({ email, verified, secured, name, big }: { email: string; verified: boolean; secured: boolean; name: string; big?: boolean }) {
-  const filled = [!!email.trim(), verified, secured, !!name.trim()].filter(Boolean).length;
-  return (
-    <div className={`fx-pass ${big ? "big" : ""}`} aria-label="Your Arena pass">
-      <span className="clip" aria-hidden="true" />
-      <span className="shine" key={filled} aria-hidden="true" />
-      <div className="photo">{name.trim() ? <img src={fx.avatarMe} alt="" /> : <Icon name="user" size={26} />}</div>
-      <div className="body">
-        <div className="hd"><small>ARENA PASS · SEASON 3</small><LogoMark size={20} /></div>
-        <strong className={name.trim() ? "" : "ph"}>{name.trim() ? `@${name.trim()}` : "Your name"}</strong>
-        <span className={`em ${email.trim() ? "" : "ph"}`}>{email.trim() || "you@email.com"}</span>
-        <div className="chips">
-          <span className={email.trim() ? "on" : ""}><Icon name="mail" size={11} />Email</span>
-          <span className={verified ? "on" : ""}><Icon name="check" size={11} />Verified</span>
-          <span className={secured ? "on" : ""}><Icon name="lock" size={11} />Secured</span>
-        </div>
-      </div>
-      {verified && <span className="stamp" aria-hidden="true">VERIFIED</span>}
-    </div>
-  );
-}
-
 function Auth({ onDone }: { onDone: (username: string) => void }) {
   const [step, setStep] = useState<AuthStep>("onboard");
   const [slide, setSlide] = useState(0);
@@ -3301,7 +3279,7 @@ function Auth({ onDone }: { onDone: (username: string) => void }) {
     const t = window.setTimeout(() => setNameState(["zurimoves", "admin", "darena", "ada"].includes(u.toLowerCase()) ? "taken" : "available"), 700);
     return () => window.clearTimeout(t);
   }, [username]);
-  useEffect(() => { if (step === "done") { const t = window.setTimeout(() => onDone(username || "guest"), 5200); return () => window.clearTimeout(t); } }, [step]);
+  useEffect(() => { if (step === "done") { const t = window.setTimeout(() => onDone(username || "guest"), 1700); return () => window.clearTimeout(t); } }, [step]);
 
   const after = (ms: number, fn: () => void) => { setBusy(true); window.setTimeout(() => { setBusy(false); fn(); }, ms); };
   const submitEmail = () => {
@@ -3343,25 +3321,11 @@ function Auth({ onDone }: { onDone: (username: string) => void }) {
   const pwBad = pwTouched && pw.length > 0 && passed < 3;
   const backMap: Partial<Record<AuthStep, AuthStep>> = { email: "onboard", sent: "email", verify: "sent", password: "verify", username: "password", signin: "onboard" };
   const back = () => { if (step === "email" || step === "signin") setSlide(2); setStep(backMap[step]!); };
-  const stepNo: Partial<Record<AuthStep, number>> = { email: 1, sent: 2, verify: 2, password: 3, username: 4 };
-  const hostSay: Partial<Record<AuthStep, string>> = {
-    email: "Welcome! Let’s get your Arena pass ready. Your email first.",
-    sent: "Your code is on its way. It only takes a second.",
-    verify: "Pop the code in here and you’re verified.",
-    password: "Lock your pass with a strong password.",
-    username: "Last step! What should the crowd call you?",
-  };
-  const n = stepNo[step];
   const top = (close?: boolean, skip = true) => (
-    <>
-      <div className="fx-auth-top">
-        <button className="fx-circle ring" onClick={back} aria-label={close ? "Close" : "Go back"}><FxIcon src={close ? fx.iClose : fx.iArrowLeft} /></button>
-        {n && <div className="fx-asteps" aria-label={`Step ${n} of 4`}><small>Step {n} of 4</small><span>{[1, 2, 3, 4].map((k) => <i key={k} className={k < n ? "done" : k === n ? "on" : ""} />)}</span></div>}
-        {skip ? <button className="fx-skip" onClick={() => onDone(username || "guest")}>Skip</button> : <span style={{ width: 44 }} />}
-      </div>
-      {n && step !== "sent" && <AuthPass email={email} verified={["password", "username"].includes(step) || codeState === "ok"} secured={step === "username"} name={username} />}
-      {n && <div className="fx-hostchip" key={step}><span className="hface"><HostFigure talking /></span><p>{hostSay[step]}</p></div>}
-    </>
+    <div className="fx-auth-top">
+      <button className="fx-circle ring" onClick={back} aria-label={close ? "Close" : "Go back"}><FxIcon src={close ? fx.iClose : fx.iArrowLeft} /></button>
+      {skip && <button className="fx-skip" onClick={() => onDone(username || "guest")}>Skip</button>}
+    </div>
   );
   const pwField = (
     <div>
@@ -3399,17 +3363,7 @@ function Auth({ onDone }: { onDone: (username: string) => void }) {
     );
   }
 
-  if (step === "done") return (
-    <div className="fx fx-auth fx-noise fx-auth-done" style={noiseVar}>
-      <span className="burst" aria-hidden="true" />
-      <p className="kick">REGISTRATION COMPLETE</p>
-      <AuthPass email={email} verified secured name={username || "guest"} big />
-      <h1>You’re in!</h1>
-      <p className="sub">Welcome to the Arena, @{username || "guest"}. Your pass is ready, so take your seat.</p>
-      <div className="grow" />
-      <button className="fx-btn" onClick={() => onDone(username || "guest")}>Enter D-Arena</button>
-    </div>
-  );
+  if (step === "done") return <div className="fx fx-auth fx-noise" style={noiseVar}><div style={{ margin: "auto" }}><FxLoader label="You’re all set." /></div></div>;
 
   return (
     <div className="fx fx-auth fx-noise" style={noiseVar}>
