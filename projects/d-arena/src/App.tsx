@@ -1194,21 +1194,39 @@ function HostShow({ c, start, onClose }: { c: Comp; start: "Overview" | "Rules";
     } catch { /* speech not available */ }
   }, [i, voiceOn, paused, voice]);
   useEffect(() => () => { try { window.speechSynthesis?.cancel(); } catch { /* ignore */ } }, []);
-  const tap = (ev: React.MouseEvent<HTMLDivElement>) => { const r = ev.currentTarget.getBoundingClientRect(); if (ev.clientX - r.left < r.width * 0.3) setI(Math.max(0, i - 1)); else if (!last) setI(i + 1); };
-  const chapters: HostSlide["ch"][] = ["Overview", "House rules", "Join"];
+  const [tips, setTips] = useState(() => { try { return !localStorage.getItem("da-hs-tips"); } catch { return true; } });
+  const closeTips = () => { setTips(false); setPaused(false); try { localStorage.setItem("da-hs-tips", "1"); } catch { /* ignore */ } };
+  useEffect(() => { if (tips) setPaused(true); }, []);
+  const hold = useRef<{ t: number; held: boolean }>({ t: 0, held: false });
+  const down = (ev: React.PointerEvent<HTMLDivElement>) => {
+    if ((ev.target as HTMLElement).closest("button, a, input")) return;
+    hold.current.held = false;
+    hold.current.t = window.setTimeout(() => { hold.current.held = true; setPaused(true); }, 260);
+  };
+  const up = (ev: React.PointerEvent<HTMLDivElement>) => {
+    if ((ev.target as HTMLElement).closest("button, a, input")) return;
+    window.clearTimeout(hold.current.t);
+    if (hold.current.held) { hold.current.held = false; setPaused(false); return; }
+    const r = ev.currentTarget.getBoundingClientRect();
+    if (ev.clientX - r.left < r.width * 0.35) setI(Math.max(0, i - 1)); else if (!last) setI(i + 1);
+  };
+  const cancel = () => { window.clearTimeout(hold.current.t); if (hold.current.held) { hold.current.held = false; setPaused(false); } };
   const talking = !paused && !last && (speaking || !voiceOn);
   return (
     <div className="hs tv">
-      <div className="hs-bars">{slides.map((_, k) => <i key={k} className={k < i ? "done" : ""}>{k === i && <b key={`${i}-${paused}`} className={paused || last ? "hold" : ""} style={{ animationDuration: `${dur}ms` }} />}</i>)}</div>
+      <div className="hs-topline">
+        <button className="hs-back" onClick={onClose} aria-label="Back to competition"><FxIcon src={fx.iArrowLeft} size={20} /></button>
+        <div className="hs-bars">{slides.map((_, k) => <i key={k} className={k < i ? "done" : ""}>{k === i && <b key={`${i}-${paused}`} className={paused || last ? "hold" : ""} style={{ animationDuration: `${dur}ms` }} />}</i>)}</div>
+      </div>
       <div className="tv-top">
         <span className="bug"><LogoMark size={18} /><span><b>{c.name}</b><small>{s.ch}</small></span></span>
         <span className="onair"><i />ON AIR</span>
         <div className="hs-ctrl">
           <button onClick={() => setVoiceOn(!voiceOn)} aria-label={voiceOn ? "Mute host" : "Unmute host"}>{voiceOn ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" /><path d="M17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11" /></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" /><path d="m17 9 5 5M22 9l-5 5" /></svg>}</button>
-          <button onClick={onClose} aria-label="Close"><Icon name="x" size={20} /></button>
         </div>
       </div>
-      <div className="tv-screen" onClick={tap}>
+      <div className="hs-touch" onPointerDown={down} onPointerUp={up} onPointerLeave={cancel} onPointerCancel={cancel} onContextMenu={(ev) => ev.preventDefault()}>
+      <div className="tv-screen">
         <h3 key={`t${i}`}>{s.t}</h3>
         <div className="hs-vis" key={`v${i}`}>{s.v}</div>
       </div>
@@ -1219,11 +1237,14 @@ function HostShow({ c, start, onClose }: { c: Comp; start: "Overview" | "Rules";
           <p className="cap" key={`c${i}`}>{s.say}</p>
         </div>
       </div>
-      <div className="hs-foot">
-        <button className="fx-circle" disabled={i === 0} onClick={() => setI(i - 1)} aria-label="Previous"><FxIcon src={fx.iArrowLeft} /></button>
-        <div className="hs-ch">{chapters.map((ch) => <button key={ch} className={s.ch === ch ? "on" : ""} onClick={() => setI(slides.findIndex((x) => x.ch === ch))}>{ch}</button>)}</div>
-        <button className="fx-circle" onClick={() => (last ? (setI(0), setPaused(false)) : setPaused(!paused))} aria-label={last ? "Replay" : paused ? "Play" : "Pause"}>{last ? <Icon name="rise" size={18} /> : paused ? <Icon name="play" size={18} filled /> : <Icon name="pause" size={18} />}</button>
       </div>
+      {paused && !tips && !last && <span className="hs-held" aria-hidden="true"><Icon name="pause" size={14} /> Paused · let go to continue</span>}
+      {tips && <div className="hs-tips" onClick={closeTips} role="dialog" aria-label="How to watch">
+        <div className="z l"><span className="hand"><i /></span><b>Tap left</b><small>Go back</small></div>
+        <div className="z c"><span className="hand hold"><i /></span><b>Hold</b><small>Pause to read</small></div>
+        <div className="z r"><span className="hand"><i /></span><b>Tap right</b><small>Next</small></div>
+        <button className="fx-btn md" onClick={closeTips}>Got it</button>
+      </div>}
     </div>
   );
 }
