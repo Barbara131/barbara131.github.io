@@ -1477,3 +1477,54 @@
 .gc-ok b { font: 800 30px/36px var(--fx-display); color: var(--gold40); }
 .gc-ok p { margin: 0 0 14px; font: 400 14px/20px var(--fx-body); color: var(--g30); } .gc-ok p strong { color: var(--g10); }
 @keyframes passPop { from { transform: scale(.4); opacity: 0; } }
+
+/* ───────── Take your seat v2 (cinema-style arrangement) ───────── */
+.sp2 { height: 100%; overflow-y: auto; display: flex; flex-direction: column; background: var(--g100); font-family: var(--fx-body); }
+.sp2 > * { flex-shrink: 0; }
+.sp2-hero { position: relative; height: 300px; overflow: hidden; }
+.sp2-hero .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sp2-hero .blur { position: absolute; left: 0; right: 0; bottom: 0; height: 62%; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%); mask-image: linear-gradient(180deg, transparent 0%, #000 55%); background: linear-gradient(180deg, rgba(13,13,13,0) 0%, rgba(13,13,13,.55) 50%, var(--g100) 100%); }
+.sp2-hero::before { content: ""; position: absolute; inset: 0 0 auto; height: 110px; z-index: 1; background: linear-gradient(180deg, rgba(13,13,13,.65), transparent); }
+.sp2-hero .bar { position: absolute; z-index: 2; top: calc(48px + env(safe-area-inset-top, 0px)); left: 16px; right: 16px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; }
+.sp2-hero .bar b { text-align: center; font: 600 17px/22px var(--fx-body); color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+.sp2-hero .bar .fx-circle { background: rgba(13,13,13,.4); backdrop-filter: blur(8px); }
+.sp2-hero .ttl { position: absolute; z-index: 2; left: 20px; right: 20px; bottom: 16px; display: grid; gap: 10px; }
+.sp2-hero h2 { margin: 0; font: 800 30px/36px var(--fx-display); color: #fff; text-shadow: 0 2px 14px rgba(0,0,0,.55); font-variation-settings: "opsz" 14, "wdth" 100; }
+.sp2-hero .tags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.sp2-hero .tags span { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 4px; font: 700 12px/16px var(--fx-body); }
+.sp2-hero .t1 { background: #fff; color: #111; }
+.sp2-hero .t2 { border: 1px solid rgba(255,255,255,.4); color: #fff; }
+.sp2-hero .t3 { padding: 0; color: #fff; font-weight: 500; font-size: 14px; }
+.sp2-hero .t3 i { width: 7px; height: 7px; border-radius: 50%; background: #f04438; animation: fxBlink 1.2s steps(1) infinite; }
+.sp2-info { display: grid; grid-template-columns: 1.3fr 1fr .8fr; gap: 10px; margin: 6px 20px 0; padding-bottom: 18px; border-bottom: 1px solid var(--g80); }
+.sp2-info div { display: grid; gap: 2px; }
+.sp2-info small { font: 400 13px/18px var(--fx-body); color: var(--g50); }
+.sp2-info b { font: 600 15px/20px var(--fx-body); color: var(--g10); }
+.sp2-hall { position: relative; margin: 26px 12px 0; }
+.sp2-hall .stage { position: relative; z-index: 2; margin: 0 6%; height: 24px; display: grid; place-items: center; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: linear-gradient(180deg, #fff 0%, #f6e7c0 60%, #c9a45c 100%); box-shadow: 0 6px 22px rgba(255,236,190,.35); clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%); }
+.sp2-hall .stage span { font: 800 10px/12px var(--fx-body); letter-spacing: .5em; color: #4a3610; padding-left: .5em; }
+.sp2-hall .cone { position: absolute; z-index: 0; left: 10%; right: 10%; top: 22px; height: 210px; background: linear-gradient(180deg, rgba(255,236,190,.16), rgba(255,236,190,0)); clip-path: polygon(0 0, 100% 0, 112% 100%, -12% 100%); pointer-events: none; }
+.sp2-hall .grid { position: relative; z-index: 1; display: grid; gap: 10px; margin-top: 26px; }
+.sp2-hall .row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.sp2-hall .row > em { width: 16px; flex: none; text-align: center; font: 500 12px/14px var(--fx-body); font-style: normal; color: var(--g50); }
+.sp2-hall .blk { display: flex; gap: 6px; }
+.sp2-hall .st { width: 26px; height: 22px; padding: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; transition: transform .15s; }
+.sp2-hall .st svg { fill: currentColor; }
+.sp2-hall .st.free { color: var(--gold50); }
+.sp2-hall .st.vip { color: #ff9f6b; }
+.sp2-hall .st.taken { color: var(--g80); cursor: not-allowed; }
+.sp2-hall .st.mine { color: #fff; filter: drop-shadow(0 0 8px rgba(255,255,255,.75)); transform: scale(1.15); }
+.sp2-hall .st:not(:disabled):active { transform: scale(.88); }
+.sp2-hall .row.cols .blk span { width: 26px; text-align: center; font: 500 12px/14px var(--fx-body); color: var(--g50); }
+.sp2-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin: 22px 16px 0; font: 400 13px/18px var(--fx-body); color: var(--g20); }
+.sp2-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sp2-legend i { display: grid; } .sp2-legend svg { fill: currentColor; }
+.sp2-legend i.mine { color: #fff; } .sp2-legend i.free { color: var(--gold50); } .sp2-legend i.vip { color: #ff9f6b; } .sp2-legend i.taken { color: var(--g70); }
+.sp2-pick { align-self: center; display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 6px 12px; border: 0; border-radius: 100px; background: rgba(255,255,255,.06); color: var(--g20); font: 500 13px/18px var(--fx-body); cursor: pointer; }
+.sp2-foot { position: sticky; bottom: 0; margin-top: auto; padding: 18px 20px calc(22px + env(safe-area-inset-bottom, 0px)); background: linear-gradient(0deg, var(--g100) 70%, rgba(13,13,13,0)); }
+.sp2-cta { width: 100%; display: grid; justify-items: center; gap: 2px; padding: 12px 16px; border: 0; border-radius: 12px; background: linear-gradient(180deg, #ffe58a, #e9b52f); color: #2a1d05; cursor: pointer; box-shadow: 0 10px 26px -10px rgba(249,200,70,.7); transition: transform .15s, filter .2s; }
+.sp2-cta:active { transform: scale(.985); }
+.sp2-cta b { font: 700 17px/22px var(--fx-body); }
+.sp2-cta small { font: 500 13px/18px var(--fx-body); color: rgba(42,29,5,.75); }
+.sp2-cta:disabled { background: var(--g80); color: var(--g30); box-shadow: none; cursor: default; }
+.sp2-cta:disabled small { color: var(--g50); }

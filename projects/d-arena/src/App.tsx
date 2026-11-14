@@ -1884,60 +1884,67 @@ function Laurel({ flip }: { flip?: boolean }) {
   );
 }
 
-function SeatPicker({ c, pick, setPick, take, anywhere }: { c: Comp; pick: [number, number] | null; setPick: (p: [number, number]) => void; take: () => void; anywhere: () => void }) {
+const SP_COLS = "ABCDEFGHIJ".split("");
+const SP_ROWS = 8;
+const spTaken = (r: number, k: number) => (r < 3 ? (r * 5 + k * 3) % 7 !== 0 : (r * 7 + k * 11) % 13 === 0);
+const spLabel = (p: [number, number]) => `${SP_COLS[p[1]]}${p[0] + 1}`;
+function Armchair() {
+  return <svg width="20" height="16" viewBox="0 0 20 16" aria-hidden="true"><path d="M4 2.5A2.5 2.5 0 0 1 6.5 0h7A2.5 2.5 0 0 1 16 2.5V8H4z" /><path d="M1 6.5a1.5 1.5 0 0 1 3 0V9h12V6.5a1.5 1.5 0 0 1 3 0V13a1 1 0 0 1-1 1h-1v1.5h-2V14H6v1.5H4V14H3a1 1 0 0 1-1-1z" /></svg>;
+}
+
+function SeatPicker({ c, pick, setPick, take }: { c: Comp; pick: [number, number] | null; setPick: (p: [number, number]) => void; take: () => void; anywhere: () => void }) {
   const a = useArena();
-  const vip = pick ? seatVip(pick[0], pick[1]) : false;
-  const faces = c.entries.slice(0, 3).map((e) => e.image);
+  const vip = pick ? pick[0] < 2 : false;
+  const sched = lobbySchedule(c);
+  const onsite = c.id === "bdm" || c.id === "kings" || c.id === "voice";
+  const pickForMe = () => {
+    const free: [number, number][] = [];
+    for (let r = 3; r < SP_ROWS - 1; r++) for (let k = 2; k < 8; k++) if (!spTaken(r, k)) free.push([r, k]);
+    if (free.length) setPick(free[Math.floor(Math.random() * free.length)]);
+  };
+  const block = (r: number, cols: number[]) => <div className="blk">{cols.map((k) => {
+    const taken = spTaken(r, k);
+    const mine = pick?.[0] === r && pick?.[1] === k;
+    return <button key={k} disabled={taken} className={`st ${taken ? "taken" : r < 2 ? "vip" : "free"} ${mine ? "mine" : ""}`} onClick={() => setPick([r, k])} aria-label={`Row ${r + 1}, seat ${SP_COLS[k]}${taken ? ", taken" : r < 2 ? ", VIP" : ""}`}><Armchair /></button>;
+  })}</div>;
   return (
-    <div className="sp">
-      <div className="sp-hero">
+    <div className="sp2">
+      <div className="sp2-hero">
         <img className="bg" src={c.image} alt="" />
-        <span className="beams" aria-hidden="true"><i /><i /><i /><i /></span>
+        <span className="blur" aria-hidden="true" />
         <div className="bar">
-          <button className="fx-circle ring-fill" onClick={a.back} aria-label="Leave"><FxIcon src={fx.iArrowLeft} /></button>
-          <button className="fx-circle ring-fill" onClick={() => a.toast("Show link copied")} aria-label="Share"><FxIcon src={fx.iShare} /></button>
+          <button className="fx-circle" onClick={a.back} aria-label="Leave"><FxIcon src={fx.iArrowLeft} /></button>
+          <b>Take your seat</b>
+          <button className="fx-circle" onClick={() => a.toast("Show link copied")} aria-label="Share"><FxIcon src={fx.iShare} /></button>
         </div>
         <div className="ttl">
-          <small>{c.name.toUpperCase()} · ROUND {c.round}</small>
-          <div className="row"><Laurel /><h2>TAKE YOUR SEAT</h2><Laurel flip /></div>
-          <span className="aud"><span className="stack">{(faces.length ? faces : [fx.fan2, fx.fan3, fx.fan4]).map((f, k) => <img key={k} src={f} alt="" />)}</span><i />12,438 in the audience</span>
+          <h2>{c.name}</h2>
+          <div className="tags"><span className="t1">R{c.round}</span><span className="t2">{c.category.toUpperCase()}</span><span className="t3"><i />12,438 in the audience</span></div>
         </div>
       </div>
-      <div className="sp-stage"><span>STAGE</span></div>
-      <div className="sp-map">
-        {SEAT_ROWS.slice(0, SEAT_PICK_ROWS).map((row, r) => {
-          const n = seatsIn(r);
-          return (
-            <div key={row} className="sp-row">
-              <em>{row}</em>
-              <div>{Array.from({ length: n }).map((_, k) => {
-                const t = (k - (n - 1) / 2) / ((n - 1) / 2);
-                const taken = seatTaken(r, k) && (r * 3 + k) % 4 === 0;
-                const v = seatVip(r, k);
-                const mine = pick?.[0] === r && pick?.[1] === k;
-                return (
-                  <button key={k} disabled={taken} className={`ch ${taken ? "taken" : v ? "vip" : "free"} ${mine ? "mine" : ""}`} style={{ transform: `translateY(${-t * t * (6 + r * 2)}px) rotate(${t * 9}deg)` }} onClick={() => setPick([r, k])} aria-label={`Row ${row} seat ${k + 1}${taken ? ", taken" : v ? ", VIP" : ""}`}>
-                    {mine && <Icon name="check" size={12} />}
-                  </button>
-                );
-              })}</div>
-              <em>{row}</em>
-            </div>
-          );
-        })}
+      <div className="sp2-info">
+        <div><small>Venue</small><b>{onsite ? "Lagos · Live" : "Online"}</b></div>
+        <div><small>Date</small><b>{passDates(sched).split(" – ")[0]}</b></div>
+        <div><small>Time</small><b>7:00 PM</b></div>
       </div>
-      <div className="sp-legend"><span><i className="free" />Free</span><span><i className="vip" />VIP</span><span><i className="mine"><Icon name="check" size={9} /></i>Selected</span><span><i className="taken" />Taken</span></div>
-      <div className="sp-ticket">
-        <div className="tk" key={pick ? seatShort(pick) : "none"}>
-          <span className="ic"><Icon name="ticket" size={22} /></span>
-          <div><small>Your Seat</small><b>{pick ? seatShort(pick) : "--"}</b></div>
-          <div><small>Seat Type</small><b>{pick ? (vip ? "VIP" : "Regular") : "--"}</b></div>
-          <div><small>Price</small><b>{pick ? (vip ? "20 coins" : "Free") : "--"}</b></div>
+      <div className="sp2-hall">
+        <div className="stage"><span>STAGE</span></div>
+        <span className="cone" aria-hidden="true" />
+        <div className="grid">
+          {Array.from({ length: SP_ROWS }, (_, r) => (
+            <div key={r} className="row"><em>{r + 1}</em>{block(r, [0, 1, 2])}{block(r, [3, 4, 5, 6])}{block(r, [7, 8, 9])}<em>{r + 1}</em></div>
+          ))}
+          <div className="row cols"><em />{[[0, 1, 2], [3, 4, 5, 6], [7, 8, 9]].map((g, gi) => <div key={gi} className="blk">{g.map((k) => <span key={k}>{SP_COLS[k]}</span>)}</div>)}<em /></div>
         </div>
-        <button className="chg" onClick={anywhere}><Icon name="rise" size={16} />{pick ? "Change" : "Seat me"}</button>
       </div>
-      <button className="sp-take" disabled={!pick} onClick={take}><Icon name="ticket" size={22} /> TAKE MY SEAT</button>
-      <p className="sp-note"><Icon name="info" size={15} /> You can change your seat anytime before the show starts.</p>
+      <div className="sp2-legend"><span><i className="mine"><Armchair /></i>Selected</span><span><i className="free"><Armchair /></i>Available</span><span><i className="vip"><Armchair /></i>VIP</span><span><i className="taken"><Armchair /></i>Taken</span></div>
+      <button className="sp2-pick" onClick={pickForMe}><Icon name="rise" size={14} /> Pick a good seat for me</button>
+      <div className="sp2-foot">
+        <button className="sp2-cta" disabled={!pick} onClick={take}>
+          <b>{pick ? "Take my seat" : "Choose a seat"}</b>
+          <small>{pick ? `Seat ${spLabel(pick)} · ${vip ? "VIP" : "Regular"} · ${vip ? "20 coins" : "Free"}` : "Tap any available seat in the hall"}</small>
+        </button>
+      </div>
     </div>
   );
 }
@@ -1958,7 +1965,7 @@ function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
     return () => window.clearInterval(t);
   }, [step, doors]);
   useEffect(() => { if (step !== "lights") return; const t = window.setTimeout(onDone, 2700); return () => window.clearTimeout(t); }, [step]);
-  const take = (p: [number, number] | null = pick) => { if (!p) return; a.setSeat(seatLabel(p)); setStep("seated"); };
+  const take = (p: [number, number] | null = pick) => { if (!p) return; a.setSeat(`Row ${p[0] + 1} · Seat ${"ABCDEFGHIJ"[p[1]] ?? p[1] + 1}`); setStep("seated"); };
   const anywhere = () => {
     const free: [number, number][] = [];
     SEAT_ROWS.forEach((_, r) => { for (let s = 0; s < seatsIn(r); s++) if (!seatTaken(r, s)) free.push([r, s]); });
