@@ -371,9 +371,28 @@ function FxViewer({ v, onClose }: { v: ViewItem; onClose: () => void }) {
   );
 }
 
+const CROWD = Array.from({ length: 34 }, (_, k) => ({ x: 6 + k * 11.6 + ((k * 37) % 7), y: 70 + ((k * 53) % 18), r: 7 + ((k * 13) % 4), arm: k % 4 === 1 ? -1 : k % 5 === 2 ? 1 : 0 }));
+function ConcertBackdrop() {
+  return (
+    <span className="concert" aria-hidden="true">
+      <span className="rig">{Array.from({ length: 14 }, (_, k) => <i key={k} style={{ animationDelay: `${(k % 5) * 0.4}s` }} />)}</span>
+      <span className="beams">{[-38, -24, -12, 0, 12, 24, 38].map((d, k) => <i key={k} className={k % 2 ? "p" : "g"} style={{ transform: `rotate(${d}deg)`, animationDelay: `${k * 0.3}s` }} />)}</span>
+      <span className="screens"><i /><i /></span>
+      <svg className="crowd" viewBox="0 0 400 120" preserveAspectRatio="none">
+        {CROWD.map((p, k) => <g key={k} fill="#07050a">
+          <circle cx={p.x} cy={p.y} r={p.r} />
+          <path d={`M${p.x - p.r * 1.9} 120 Q${p.x} ${p.y + p.r * 0.6} ${p.x + p.r * 1.9} 120Z`} />
+          {p.arm !== 0 && <path d={`M${p.x + p.arm * p.r * 0.8} ${p.y + p.r} L${p.x + p.arm * p.r * 1.6} ${p.y - p.r * 2.6}`} stroke="#07050a" strokeWidth="4" strokeLinecap="round" />}
+        </g>)}
+      </svg>
+    </span>
+  );
+}
+
 function ProfileSpotlight({ img, name, handle, tagline, bio, stats, kicker, back, onMore, children }: { img: string; name: string; handle: string; tagline: string; bio: string; stats: [string, string, (() => void)?][]; kicker: string; back?: () => void; onMore: () => void; children: React.ReactNode }) {
   return (
     <section className="fx-spot">
+      <ConcertBackdrop />
       <span className="cone" aria-hidden="true" /><span className="floor" aria-hidden="true" />
       <div className="top">{back ? <Back onClick={back} /> : <span />}<button className="fx-circle" onClick={onMore} aria-label="More options"><FxIcon src={fx.iMore} /></button></div>
       <p className="kick">{kicker}</p>
@@ -948,6 +967,143 @@ function HostLine({ lines, autoplay }: { lines: string[]; autoplay: boolean }) {
   );
 }
 
+/* ───────── Original host character (SVG) ───────── */
+function HostFigure({ pose = "talk", talking = false, walking = false }: { pose?: "talk" | "card"; talking?: boolean; walking?: boolean }) {
+  const skin = "#8a5a3b", skinD = "#714629", hair = "#1b120c", gold = "#e9b52f", goldD = "#b98513", ink = "#161616";
+  return (
+    <svg className={`hostfig ${walking ? "walking" : ""} ${talking ? "talking" : ""} pose-${pose}`} viewBox="0 0 170 320" aria-hidden="true">
+      <ellipse cx="82" cy="312" rx="46" ry="6" fill="rgba(0,0,0,.45)" />
+      <g className="leg l"><rect x="60" y="186" width="19" height="104" rx="8" fill={ink} /><path d="M56 290h26v8a4 4 0 0 1-4 4H58a6 6 0 0 1-6-6c0-3 2-6 4-6z" fill={gold} /></g>
+      <g className="leg r"><rect x="84" y="186" width="19" height="104" rx="8" fill="#202020" /><path d="M82 290h26v6a6 6 0 0 1-6 6H86a4 4 0 0 1-4-4z" fill={gold} /></g>
+      <g className="arm back">
+        <path d="M56 116c-10 10-16 30-15 48" stroke={goldD} strokeWidth="15" strokeLinecap="round" fill="none" />
+        <path d="M41 162c0 10 2 18 6 24" stroke={skin} strokeWidth="10" strokeLinecap="round" fill="none" />
+      </g>
+      <path d="M52 112c8-6 18-9 30-9s22 3 30 9l6 76H46z" fill={gold} />
+      <path d="M82 104l-12 0 12 40 12-40z" fill={ink} />
+      <path d="M70 104l12 40-16-6-6-30zM94 104l-12 40 16-6 6-30z" fill={goldD} />
+      <rect x="46" y="182" width="72" height="10" rx="3" fill={ink} />
+      <rect x="76" y="92" width="12" height="14" rx="4" fill={skinD} />
+      <circle cx="82" cy="32" r="25" fill={hair} />
+      <rect x="62" y="44" width="40" height="7" rx="3.5" fill={gold} />
+      <ellipse cx="82" cy="70" rx="22" ry="25" fill={skin} />
+      <path d="M60 64c2-16 12-22 22-22s20 6 22 22c-6-8-14-11-22-11s-16 3-22 11z" fill={hair} />
+      <circle cx="59" cy="76" r="5" fill="none" stroke={gold} strokeWidth="2" />
+      <circle cx="105" cy="76" r="5" fill="none" stroke={gold} strokeWidth="2" />
+      <path d="M68 62l7-1.5M89 60.5l7 1.5" stroke={hair} strokeWidth="2" strokeLinecap="round" />
+      <g className="eyes"><ellipse cx="73" cy="69" rx="2.6" ry="3.2" fill={hair} /><ellipse cx="91" cy="69" rx="2.6" ry="3.2" fill={hair} /></g>
+      <path d="M80 72q2 6 0 8" stroke={skinD} strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <ellipse className="mouth" cx="82" cy="85" rx="6" ry="3" fill="#5b1f1f" />
+      {pose === "talk" ? (
+        <g className="arm front mic">
+          <path d="M110 116c8 10 12 22 8 34" stroke={goldD} strokeWidth="15" strokeLinecap="round" fill="none" />
+          <path d="M118 150c-4 10-12 16-20 18" stroke={skin} strokeWidth="10" strokeLinecap="round" fill="none" />
+          <rect x="91" y="132" width="7" height="34" rx="3.5" fill={ink} transform="rotate(-24 94 150)" />
+          <circle cx="89" cy="128" r="7.5" fill="#3a3a3a" stroke={goldD} strokeWidth="1.5" />
+        </g>
+      ) : (
+        <g className="arm front hold">
+          <path d="M110 116c12 4 22 12 30 20" stroke={goldD} strokeWidth="15" strokeLinecap="round" fill="none" />
+          <path d="M140 136c6 5 10 8 16 9" stroke={skin} strokeWidth="10" strokeLinecap="round" fill="none" />
+          <circle cx="158" cy="145" r="6" fill={skin} />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+function hostLines(c: Comp) {
+  const sched = lobbySchedule(c);
+  const now = sched[Math.max(0, lobbyNow(c))]?.[0];
+  const about = c.about.split(/(?<=[.!?])\s+/).filter(Boolean);
+  return [
+    `Welcome to ${c.name}! I’m ${HOST.name}, your host.`,
+    about[0] ?? c.about,
+    `${c.contestants.toLocaleString()} contestants, ${c.totalRounds} rounds, and one winner.`,
+    `The winner takes home ${c.prize}.`,
+    c.phase === "upcoming" ? "Doors open soon. Set a reminder so you don’t miss it." : `We’re in the ${now ?? "showcase"} stage right now.`,
+    "Everything you need is below. Enjoy the show!",
+  ];
+}
+
+function HostStage({ c }: { c: Comp }) {
+  const lines = hostLines(c);
+  const [walking, setWalking] = useState(true);
+  const [i, setI] = useState(-1);
+  const [paused, setPaused] = useState(false);
+  useEffect(() => { const t = window.setTimeout(() => { setWalking(false); setI(0); }, 1700); return () => window.clearTimeout(t); }, []);
+  useEffect(() => {
+    if (i < 0 || paused || i >= lines.length - 1) return;
+    const t = window.setTimeout(() => setI(i + 1), 3200);
+    return () => window.clearTimeout(t);
+  }, [i, paused]);
+  const talking = i >= 0 && !paused;
+  return (
+    <div className="hv-stage" onClick={() => { if (i >= 0) setI(i >= lines.length - 1 ? 0 : i + 1); }}>
+      <span className="hv-valance" /><span className="hv-cur l" /><span className="hv-cur r" />
+      <span className="hv-spot" /><span className="hv-floor" />
+      <div className={`hv-host ${walking ? "in" : ""}`}><HostFigure talking={talking && !walking} walking={walking} /></div>
+      {i >= 0 && <div className="hv-bubble" key={i} role="status" aria-live="polite"><p>{lines[i]}</p>
+        <div className="foot"><span className="dots">{lines.map((_, k) => <i key={k} className={k === i ? "on" : ""} />)}</span>
+          <button onClick={(ev) => { ev.stopPropagation(); if (i >= lines.length - 1) { setI(0); setPaused(false); } else setPaused(!paused); }}>{i >= lines.length - 1 ? "Replay" : paused ? "Play" : "Pause"}</button></div>
+      </div>}
+      {i < 0 && <p className="hv-enter">Your host is walking in…</p>}
+    </div>
+  );
+}
+
+/* ───────── Live show pieces ───────── */
+const liveLines = (h: string, voting: boolean): [string, string][] => [
+  ["@kemi.b", "joined 👋"], ["@tunde_r", "sent Fire 🔥"], ["@ngozi.k", "This is so clean"],
+  voting ? ["@alex", `voted for ${h} ⭐`] : ["@alex", "the energy!!"], ["@sofiapatel", "Let’s goooo"], ["@sam", "joined 👋"],
+  ["@ife", "❤️❤️❤️"], ["@temi_dance", "sent Applause 👏 x5"], voting ? ["@maria", `sent 10 votes to ${h}`] : ["@maria", "who taught you this?"], ["@liam", "Lagos stand up 🙌"],
+];
+
+function LiveChat({ seed, handle, voting }: { seed: number; handle: string; voting: boolean }) {
+  const [n, setN] = useState(4);
+  useEffect(() => { const t = window.setInterval(() => setN((x) => x + 1), 1700); return () => window.clearInterval(t); }, []);
+  const lines = liveLines(handle, voting);
+  const from = Math.max(0, n - 5);
+  return (
+    <div className="lv-chat" aria-live="off">
+      {Array.from({ length: n - from }, (_, k) => from + k).map((m) => { const [u, t] = lines[(m + seed * 3) % lines.length]; const sys = /joined|sent|voted/.test(t); return <p key={m} className={sys ? "sys" : ""}><b>{u}</b> {t}</p>; })}
+    </div>
+  );
+}
+
+function QuickVote({ c, en, my, more }: { c: Comp; en: Entry; my: number; more: () => void }) {
+  const a = useArena();
+  const [combo, setCombo] = useState(0);
+  const [pops, setPops] = useState<number[]>([]);
+  const idle = useRef(0);
+  const press = useRef(0);
+  const vote = () => {
+    if (a.coins < VOTE_COST) { more(); return; }
+    a.setCoins(a.coins - VOTE_COST);
+    a.castVotes(c.id, en, 1, false);
+    setCombo((k) => k + 1);
+    const id = Date.now() + Math.random();
+    setPops((p) => [...p.slice(-6), id]);
+    window.setTimeout(() => setPops((p) => p.filter((x) => x !== id)), 900);
+    window.clearTimeout(idle.current);
+    idle.current = window.setTimeout(() => setCombo(0), 1600);
+  };
+  return (
+    <div className="lv-vote-wrap">
+      {combo > 1 && <span className="lv-combo" key={combo}>x{combo}</span>}
+      {pops.map((p) => <span key={p} className="lv-pop">+1</span>)}
+      <button className={`lv-vote ${my ? "voted" : ""}`}
+        onPointerDown={() => { press.current = window.setTimeout(() => { press.current = -1; more(); }, 550); }}
+        onPointerUp={() => { if (press.current === -1) { press.current = 0; return; } window.clearTimeout(press.current); press.current = 0; vote(); }}
+        onPointerLeave={() => { if (press.current > 0) window.clearTimeout(press.current); }}
+        onContextMenu={(ev) => ev.preventDefault()}
+        aria-label={`Vote for ${en.handle}. Tap to vote, hold for more`}>
+        <Icon name="star" size={18} filled /><span><b>Vote</b><small>{VOTE_COST} coins</small></span>
+      </button>
+    </div>
+  );
+}
+
 function StageOverview({ c, openEntry }: { c: Comp; openEntry: (i: number) => void }) {
   const a = useArena();
   const [more, setMore] = useState(false);
@@ -957,7 +1113,7 @@ function StageOverview({ c, openEntry }: { c: Comp; openEntry: (i: number) => vo
   const prizes: [string, string, string][] = [["trophy", "Winner", c.prize], ["star", "Runner-up", "₦150,000 + homepage feature"], ["shield", "Top 10", "Verified creator badge"]];
   return (
     <div className="sx">
-      <div className="sx-cover"><img src={c.image} alt="" /><div><span className="sx-chip"><i className={c.phase === "voting" ? "live" : ""} />{stageInfo(c).label}</span><h3>{c.name}</h3><p>{c.category} · {c.cadence}</p></div></div>
+      <HostStage c={c} />
       <section><h4>About</h4><p className={`sx-text ${more ? "" : "clamp"}`}>{c.about}</p><button className="sx-more" onClick={() => setMore(!more)}>{more ? "Show less" : "Read more"}</button></section>
       <div className="sx-facts">
         <div><small>Grand prize</small><b className="gold">{c.prize}</b></div>
@@ -982,36 +1138,37 @@ function StageRules({ c, onDone }: { c: Comp; onDone: () => void }) {
   const n = rules.length;
   const [i, setI] = useState(0);
   const [drag, setDrag] = useState(0);
+  const [walking, setWalking] = useState(true);
   const start = useRef<number | null>(null);
+  useEffect(() => { const t = window.setTimeout(() => setWalking(false), 1500); return () => window.clearTimeout(t); }, []);
   const go = (k: number) => { if (k >= 0 && k <= n) setI(k); };
   const icons = ["users", "film", "bolt", "star", "trophy", "gift", "rise", "shield", "calendar"];
   const down = (ev: React.PointerEvent) => { start.current = ev.clientX; (ev.currentTarget as HTMLElement).setPointerCapture?.(ev.pointerId); };
   const move = (ev: React.PointerEvent) => { if (start.current !== null) setDrag(ev.clientX - start.current); };
-  const up = () => { if (start.current === null) return; start.current = null; if (drag < -70) go(i + 1); else if (drag > 70) go(i - 1); setDrag(0); };
+  const up = () => { if (start.current === null) return; start.current = null; if (Math.abs(drag) > 60) go(drag < 0 ? i + 1 : i - 1); setDrag(0); };
+  const say = i === 0 ? "Here are the house rules. Swipe the card when you’re ready." : i === n ? "That’s everything. Have fun out there!" : i === n - 1 ? "Last one. This one matters." : `Rule ${i + 1}. Keep going.`;
   return (
     <div className="sx sx-rules">
-      <div className="sx-hostline"><img src={photos.singer} alt="" /><p><b>{HOST.name}</b> walks you through the house rules. Swipe the card to continue.</p></div>
-      <div className="sx-deck">
-        {Array.from({ length: n + 1 }, (_, k) => k).filter((k) => k >= i - 1 && k <= i + 2).map((k) => {
-          const pos = k - i;
-          const style: React.CSSProperties = pos < 0 ? { transform: "translateX(-125%) rotate(-12deg)", opacity: 0, zIndex: 20 }
-            : pos === 0 ? { transform: `translateX(${drag}px) rotate(${drag / 18}deg)`, zIndex: 10, transition: drag ? "none" : undefined }
-            : { transform: `translateY(${pos * 16}px) scale(${1 - pos * 0.06})`, opacity: pos === 1 ? 0.95 : 0.6, zIndex: 10 - pos };
-          const end = k === n;
-          return (
-            <article key={k} className={`sx-card ${end ? "end" : ""}`} style={style} onPointerDown={pos === 0 ? down : undefined} onPointerMove={pos === 0 ? move : undefined} onPointerUp={pos === 0 ? up : undefined} onPointerCancel={pos === 0 ? up : undefined} aria-hidden={pos !== 0}>
-              {end ? <>
-                <span className="ic big"><Icon name="check" size={26} /></span>
-                <h3>You’re all set</h3>
-                <p>Those are the house rules. Fair play keeps the Arena fun for everyone.</p>
-              </> : <>
-                <div className="top"><small>RULE {String(k + 1).padStart(2, "0")} OF {String(n).padStart(2, "0")}</small><span className="ic"><Icon name={icons[k % icons.length]} size={20} /></span></div>
-                <h3>{rules[k][0]}</h3>
-                <p>{rules[k][1]}</p>
-              </>}
-            </article>
-          );
-        })}
+      <div className="hv-stage rules">
+        <span className="hv-valance" /><span className="hv-cur l" /><span className="hv-cur r" />
+        <span className="hv-spot" /><span className="hv-floor" />
+        <div className={`hv-host card ${walking ? "in" : ""}`}><HostFigure pose="card" talking={!walking} walking={walking} /></div>
+        {!walking && <div className="hv-say" key={i}>{say}</div>}
+        <div className={`hv-deck ${walking ? "hidden" : ""}`}>
+          {Array.from({ length: n + 1 }, (_, k) => k).filter((k) => k >= i - 1 && k <= i + 2).map((k) => {
+            const pos = k - i;
+            const style: React.CSSProperties = pos < 0 ? { transform: "translate(140%, -10%) rotate(18deg)", opacity: 0, zIndex: 20 }
+              : pos === 0 ? { transform: `translateX(${drag}px) rotate(${-3 + drag / 16}deg)`, zIndex: 10, transition: drag ? "none" : undefined }
+              : { transform: `translate(${pos * 6}px, ${pos * 6}px) rotate(${-3 + pos * 4}deg)`, zIndex: 10 - pos };
+            const end = k === n;
+            return (
+              <article key={k} className={`hv-card ${end ? "end" : ""} ${pos > 0 ? "behind" : ""}`} style={style} onPointerDown={pos === 0 ? down : undefined} onPointerMove={pos === 0 ? move : undefined} onPointerUp={pos === 0 ? up : undefined} onPointerCancel={pos === 0 ? up : undefined} aria-hidden={pos !== 0}>
+                {end ? <><span className="ic big"><Icon name="check" size={22} /></span><h3>You’re all set</h3><p>Fair play keeps the Arena fun for everyone.</p></>
+                  : <><div className="top"><small>RULE {k + 1}/{n}</small><span className="ic"><Icon name={icons[k % icons.length]} size={16} /></span></div><h3>{rules[k][0]}</h3><p>{rules[k][1]}</p></>}
+              </article>
+            );
+          })}
+        </div>
       </div>
       <div className="sx-dots" aria-hidden="true">{Array.from({ length: n + 1 }, (_, k) => <i key={k} className={k === i ? "on" : ""} />)}</div>
       <div className="sx-nav">
@@ -1360,63 +1517,59 @@ function Arena({ route }: { route: Route }) {
           const nx = list[i + 1];
           const last = i === list.length - 1;
           const cheering = Math.round(x.votes * 0.97) + (cheers[x.id] ?? 0);
+          const viewers = 12438 + ((x.votes * 7) % 3000);
+          const leader = ranked[0];
+          const gap = leader && leader.id !== x.id ? a.votesOf(c.id, leader) - a.votesOf(c.id, x) : 0;
           return (
-            <section key={x.id} className="slide" aria-label={`Contestant ${pos(i)}: ${x.handle}`}>
+            <section key={x.id} className="slide lv" aria-label={`Contestant ${pos(i)}: ${x.handle}`} onDoubleClick={() => { setLiked((m) => ({ ...m, [x.id]: true })); cheer("❤️"); }}>
               <img className={`slide-media ${i === idx ? "on" : ""}`} src={x.image} alt={`${x.name} performing`} />
-              <div className="slide-shade" />
-              <div className="stage-light" />
-              <div className="slide-rail">
-                <button className={isLiked ? "on" : ""} onClick={() => setLiked((m) => ({ ...m, [x.id]: !isLiked }))}><Icon name="heart" filled={isLiked} size={26} /><span>{fmt(s.likes + (isLiked ? 1 : 0))}</span></button>
-                <button onClick={() => setPanel("comments")}><Icon name="comment" size={25} /><span>{s.comments}</span></button>
-                <button onClick={() => setPanel("share")}><Icon name="share" size={24} /><span>{s.shares}</span></button>
-                <button className={isSaved ? "on" : ""} onClick={() => { setSaved((m) => ({ ...m, [x.id]: !isSaved })); a.toast(isSaved ? "Removed from saved" : "Saved to your profile"); }}><Icon name="bookmark" filled={isSaved} size={24} /><span>{isSaved ? "Saved" : "Save"}</span></button>
-                <button className="gift-btn" onClick={() => setPanel("gift")} aria-label="Send a gift"><b><Icon name="gift" size={22} /></b><span>Gift</span></button>
-              </div>
-              <div className="slide-info">
-                <div className="on-stage">{mine ? <span className="yours">YOUR ENTRY</span> : <span className="ns-tag">{last && showcase ? "FINAL PERFORMANCE" : "NOW ON STAGE"}</span>}<em>{String(pos(i)).padStart(2, "0")} / {total}</em></div>
-                <div className="slide-creator">
-                  <button className="sc-id" onClick={() => a.go({ screen: "creator", comp: c.id, handle: x.handle })}><img src={x.image} alt="" /><span><strong>{mine ? "You" : x.handle} <b className="verified">✓</b></strong><small>{x.name}</small></span></button>
-                  {!mine && <button className={fol ? "sc-follow on" : "sc-follow"} onClick={() => { a.toggleCreator(x.handle); if (!fol) a.toast(`You’re following ${x.handle}`); }}>{fol ? "Following" : "Follow"}</button>}
+              <div className="lv-shade" />
+              <div className="lv-top">
+                <button className="lv-host" onClick={() => a.go({ screen: "creator", comp: c.id, handle: x.handle })}>
+                  <img src={x.image} alt="" />
+                  <span><b>{mine ? "You" : x.handle}</b><small>{fmt(s.likes + (isLiked ? 1 : 0))} likes</small></span>
+                  {!mine && <span role="button" tabIndex={0} className={`plus ${fol ? "on" : ""}`} onClick={(ev) => { ev.stopPropagation(); a.toggleCreator(x.handle); if (!fol) a.toast(`You’re following ${x.handle}`); }} aria-label={fol ? "Following" : "Follow"}>{fol ? <Icon name="check" size={13} /> : <Icon name="plus" size={14} />}</span>}
+                </button>
+                <div className="lv-right">
+                  <span className="lv-viewers"><span>{ranked.slice(0, 3).map((r) => <img key={r.id} src={r.image} alt="" />)}</span><b>{fmt(viewers)}</b></span>
+                  <button className="lv-x" onClick={a.back} aria-label="Leave the Arena"><Icon name="x" size={20} /></button>
                 </div>
-                <p className="slide-cap">{x.caption}</p>
-                <div className="slide-comp">
-                  <div className="sc-meta">
-                    <span>{c.name} · Round {c.round}{c.id === "bdm" ? ` — ${rName(c.id, c.round)}` : ""}</span>
-                    <div>{votingVisible(c.phase) ? <><strong>{a.votesOf(c.id, x).toLocaleString()} votes</strong><em>{fmt(s.views)} views</em></> : <><button className="cheering" onClick={() => setTray(!tray)}>👏 {fmt(cheering)} cheering</button><em>{fmt(s.likes)} likes · {s.comments} comments</em></>}</div>
-                  </div>
-                  {votingVisible(c.phase) && <div className="sc-rank"><small>RANK</small>#{rank}</div>}
-                </div>
-                {mine && (showcase || voting) ? (
-                  <div className="slide-cta two">
-                    <button className="vote-btn ghost" onClick={() => setPanel("share")}><Icon name="share" size={16} /> Share your entry</button>
-                    <button className="vote-btn ghost" onClick={() => a.backTo({ screen: "challenge", comp: c.id })}>My performance</button>
-                  </div>
-                ) : voting && judgeMode ? (
-                  judgeAward ? <button className="vote-btn jd-locked" onClick={() => a.go({ screen: "judgeEntry", comp: c.id, pick: x.id })}><Icon name="lock" size={15} /> {judgeAward.id === x.id ? "Your pick · points awarded" : "You’ve awarded your points this round"}</button>
-                    : <button className="vote-btn jd-judge" onClick={() => a.go({ screen: "judgeEntry", comp: c.id, pick: x.id })}><Icon name="star" size={16} /> JUDGE</button>
-                ) : voting ? (
-                  <button className={my ? "vote-btn voted" : "vote-btn"} onClick={() => setPanel("vote")}>{my ? <><Icon name="check" size={16} /> You voted · {my} — vote again</> : <>VOTE</>}</button>
-                ) : showcase ? null : c.phase === "closed" || c.phase === "processing" ? (
-                  <div className="vote-closed"><span><b>VOTING CLOSED</b>Results are being confirmed.</span><button onClick={() => a.go({ screen: "leaderboard", comp: c.id })}>View Leaderboard</button></div>
-                ) : (
-                  <div className="vote-closed"><span><b>{c.phase === "completed" ? "COMPETITION COMPLETE" : "RESULTS LIVE"}</b>See who moves on.</span><button onClick={() => a.go({ screen: "results", comp: c.id })}>View Results</button></div>
-                )}
-                {showcase && (nx ? (
-                  <button className="up-next" onClick={next}>
-                    <img src={nx.image} alt="" />
-                    <span><small>UP NEXT</small><strong>{nx.id === "me" ? "You" : nx.handle}</strong></span>
-                    <em>Next contestant <Icon name="arrow" size={14} /></em>
-                  </button>
-                ) : (
-                  <button className="up-next final" onClick={next}><span><small>THAT’S EVERYONE</small><strong>The showcase is ending</strong></span><em>Finish showcase <Icon name="arrow" size={14} /></em></button>
-                ))}
-                {showcase && <p className="vote-note">Voting opens after the showcase.</p>}
               </div>
+              <div className="lv-tags">
+                <span className="lv-live">LIVE</span>
+                <button onClick={() => setPanel("gallery")}><Icon name="trophy" size={12} />{c.name}</button>
+                {votingVisible(c.phase) ? <span>#{rank} · {fmt(a.votesOf(c.id, x))} votes</span> : <span>{pos(i)}/{total} on stage</span>}
+              </div>
+              {voting && !mine && !judgeMode && (
+                <div className="lv-goal">
+                  <div className="bar"><i style={{ width: `${leader ? Math.max(8, (a.votesOf(c.id, x) / Math.max(1, a.votesOf(c.id, leader))) * 100) : 100}%` }} /></div>
+                  <small>{gap > 0 ? `${gap.toLocaleString()} votes to #1` : "Leading the round"} · {c.time.replace("Ends in ", "")} left</small>
+                </div>
+              )}
+              {i === idx && <LiveChat seed={i} handle={x.handle} voting={voting} />}
+              {(showcase || voting) && (nx ? (
+                <button className="lv-next" onClick={next}><img src={nx.image} alt="" /><span><small>Up next</small><b>{nx.id === "me" ? "You" : nx.handle}</b></span><Icon name="down" size={14} /></button>
+              ) : showcase ? (
+                <button className="lv-next end" onClick={next}><span><small>That’s everyone</small><b>Finish showcase</b></span><Icon name="arrow" size={14} /></button>
+              ) : null)}
+              <div className="lv-bar">
+                <button className="lv-input" onClick={() => setPanel("comments")}>Add comment…</button>
+                <button className="lv-ic" onClick={() => setPanel("share")} aria-label="Share"><FxIcon src={fx.iSend} size={22} /></button>
+                <button className="lv-ic" onClick={() => { setLiked((m) => ({ ...m, [x.id]: true })); cheer("❤️"); }} aria-label="Like"><FxIcon src={isLiked ? fx.iHeartBold : fx.iHeart} size={22} /></button>
+                <button className="lv-ic gift" onClick={() => setPanel("gift")} aria-label="Send a gift"><Icon name="gift" size={22} /></button>
+                {mine && (showcase || voting) ? <button className="lv-cta ghost" onClick={() => setPanel("share")}>Share</button>
+                  : voting && judgeMode ? (judgeAward ? <button className="lv-cta ghost" onClick={() => a.go({ screen: "judgeEntry", comp: c.id, pick: x.id })}><Icon name="lock" size={13} /> Judged</button> : <button className="lv-cta" onClick={() => a.go({ screen: "judgeEntry", comp: c.id, pick: x.id })}>JUDGE</button>)
+                  : voting ? <QuickVote c={c} en={x} my={my} more={() => setPanel("vote")} />
+                  : showcase ? null
+                  : <button className="lv-cta ghost" onClick={() => a.go({ screen: c.phase === "closed" || c.phase === "processing" ? "leaderboard" : "results", comp: c.id })}>{c.phase === "closed" || c.phase === "processing" ? "Leaderboard" : "Results"}</button>}
+              </div>
+              {showcase && i === idx && <p className="lv-note">Voting opens after the showcase · double-tap to cheer</p>}
             </section>
           );
         })}
       </div>
-      {header}
+      {showcase && list.length > 0 && <div className="lv-progress"><i style={{ width: `${(pos(idx) / total) * 100}%` }} /></div>}
+      {c.id === "bdm" && <button className="lv-hostbtn" onClick={a.openHost} aria-label="Host controls"><Icon name="sliders" size={15} /> Host</button>}
       {tray && <div className="cheer-tray">{["👏", "🔥", "❤️", "🙌"].map((e) => <button key={e} onClick={() => cheer(e)}>{e}</button>)}</div>}
       <div className="bursts">{bursts.map((b) => <span key={b.id} style={{ left: `${b.x}%` }}>{b.e}</span>)}</div>
       {stageCard && en && (showcase || voting) && <div className="stage-card" key={`${idx}-${c.phase}`}><small>{voting ? "ON STAGE · VOTING LIVE" : idx === list.length - 1 ? "FINAL PERFORMANCE" : "NOW ON STAGE"}</small><strong>{en.id === "me" ? "You" : en.handle}</strong><em>{String(pos(idx)).padStart(2, "0")} / {total}</em></div>}
@@ -1502,7 +1655,7 @@ function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
   const [step, setStep] = useState<"seat" | "seated" | "count" | "lights">(returning ? "count" : "seat");
   const [pick, setPick] = useState<[number, number] | null>(parseSeat(a.seat));
   const [n, setN] = useState(3);
-  useEffect(() => { const t = window.setTimeout(() => setDoors(false), 1500); return () => window.clearTimeout(t); }, []);
+  useEffect(() => { const t = window.setTimeout(() => setDoors(false), 2600); return () => window.clearTimeout(t); }, []);
   useEffect(() => { if (step !== "seated") return; const t = window.setTimeout(() => setStep("count"), 2400); return () => window.clearTimeout(t); }, [step]);
   useEffect(() => {
     if (step !== "count" || doors) return;
@@ -1538,12 +1691,12 @@ function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
       </div>}
       {step === "seated" && <div className="seq-seated">
         <Auditorium pick={pick} mode="seated" />
-        <div className="seated-msg"><Icon name="check" size={22} /><h2>You’re seated</h2><p>{a.seat}</p><small>House lights are going down…</small></div>
+        <div className="seated-msg"><Icon name="check" size={22} /><h2>You’re seated</h2><p>{a.seat}</p><small>Get ready. The show starts in a moment.</small></div>
       </div>}
       {step === "count" && <div className="seq-count">
         <div className="count-stage" />
         <div className="phone-lights" aria-hidden="true">{phoneLights.map((p, i) => <i key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, animationDelay: `${p.d}s` }} />)}</div>
-        <p className="count-kicker">{returning ? `Welcome back · ${a.seat}` : `${a.seat} · The show is about to begin`}</p>
+        <p className="count-kicker">{returning ? `Welcome back · ${a.seat}` : "Get ready"}</p><p className="count-sub">{a.seat} · {c.name}</p>
         {!doors && <strong className="count-num" key={n}>{n}</strong>}
         {returning && <button className="ghost-btn count-change" onClick={() => { setReturning(false); setStep("seat"); }}>Change seat</button>}
       </div>}
@@ -1551,7 +1704,7 @@ function EntrySequence({ c, onDone }: { c: Comp; onDone: () => void }) {
         <span className="spot s1" /><span className="spot s2" /><span className="spot s3" /><span className="spot s4" />
         <div className="curtain"><i /></div>
       </div>}
-      {doors && <div className="doors" aria-hidden="true"><span className="door l" /><span className="door r" /><b>D</b></div>}
+      {doors && <div className="fx-curtains" aria-hidden="true"><span className="cur l" /><span className="cur r" /><span className="valance" /><span className="halo" /></div>}
     </div>
   );
 }
